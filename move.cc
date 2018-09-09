@@ -3,7 +3,7 @@
 
 Move::Move(char from, char to) {
   if ('0' <= from && from <= '7') {
-    if (to == 'f')
+    if (to == 'h')
       *this = Move(kTableauToFoundation, from - '0');
     else if (to == 'r')
       *this = Move(kTableauToReserve, from - '0');
@@ -11,8 +11,8 @@ Move::Move(char from, char to) {
       *this = Move(kTableauToTableau, from - '0', to - '0');
     else
       assert(!"Unknown encoding");
-  } else if ('a' <= from && from <= 'd') {
-    if (to == 'f')
+  } else if ('a' <= from && from < 'h') {
+    if (to == 'h')
       *this = Move(kReserveToFoundation, from - 'a');
     else if ('0' <= to && to <= '7')
       *this = Move(kReserveToTableau, from - 'a', to - '0');
@@ -24,13 +24,13 @@ Move::Move(char from, char to) {
 string Move::Encode() const {
   switch (type) {
     case kTableauToFoundation:
-      return string("") + char('0' + from) + char('f');
+      return string("") + char('0' + from) + char('h');
     case kTableauToReserve:
       return string("") + char('0' + from) + char('r');
     case kTableauToTableau:
       return string("") + char('0' + from) + char('0' + to);
     case kReserveToFoundation:
-      return string("") + char('a' + from) + char('f');
+      return string("") + char('a' + from) + char('h');
     case kReserveToTableau:
       return string("") + char('a' + from) + char('0' + to);
     default:

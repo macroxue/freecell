@@ -186,7 +186,7 @@ class Node {
         }
       }
 
-      if (reserve_.size() < 4 && AllowTableauToReserve(i)) {
+      if (reserve_.size() < reserve_.max_size() && AllowTableauToReserve(i)) {
         new_nodes.Append(pool->New(*this)->TableauToReserve(i));
       }
     }
@@ -195,7 +195,7 @@ class Node {
   }
 
   int MaxSuperMoveSize(int from, int to) const {
-    int free_cells = 4 - reserve_.size();
+    int free_cells = reserve_.max_size() - reserve_.size();
     int empty_tableaus = 0;
     for (int t = 0; t < 8; ++t) {
       if (t == from || t == to) continue;
