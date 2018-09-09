@@ -38,7 +38,7 @@ class Pool {
 
 class Node {
  public:
-  using CompressedMoves = BitStream<384>;
+  using CompressedMoves = BitStream<512>;
   using Reserve = Array<Card, 4>;
 
   Node() {}

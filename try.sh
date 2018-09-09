@@ -15,4 +15,4 @@ while [[ $beam -le 16 ]]; do
   fi
   beam=$((beam+1))
 done
-echo "No solution"
+echo "$deal:No solution"

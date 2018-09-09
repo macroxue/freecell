@@ -17,13 +17,14 @@ bit_stream_test: bit_stream_test.cc bit_stream.h
 	g++ -g -std=c++0x -o $@ $(filter %.cc,$^)
 	./$@
 
-node_test: node_test.cc node.cc node.h list.h move.cc move.h \
-	         tableau.cc tableau.h foundation.h array.h card.h
+NODE_SRC=node.cc node.h list.h move.cc move.h \
+				 tableau.cc tableau.h foundation.h array.h card.h bit_stream.h
+
+node_test: node_test.cc $(NODE_SRC)
 	g++ -g -std=c++0x -o $@ $(filter %.cc,$^)
 	./$@
 
-SOLVER_SRC=solver.cc node.cc node.h list.h move.cc move.h deals.cc deals.h \
-           bucket.h hash_table.h tableau.cc tableau.h foundation.h array.h card.h
+SOLVER_SRC=solver.cc $(NODE_SRC) deals.cc deals.h bucket.h hash_table.h
 
 solver: $(SOLVER_SRC)
 	g++ -O3 -std=c++0x -o $@ $(filter %.cc,$^) -pthread
@@ -39,6 +40,5 @@ solver.q: $(SOLVER_SRC)
 	g++ -O3 -std=c++0x -fprofile-use -o $@ $(filter %.cc,$^) -pthread
 	time ./$@ 12 12
 
-visualizer: visualizer.cc node.cc node.h list.h move.cc move.h deals.cc deals.h \
-	          tableau.cc tableau.h card.h
+visualizer: visualizer.cc $(NODE_SRC) deals.cc deals.h
 	g++ -O3 -std=c++0x -o $@ $(filter %.cc,$^)

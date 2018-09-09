@@ -51,7 +51,7 @@ class BitStream {
       stream_[write_chunk_] |= (value << written_chunk_bits_);
       written_chunk_bits_ += bits;
     } else {
-      assert(write_chunk_ < kNumChunks);
+      assert(write_chunk_ < kNumChunks - 1);
       if (free_chunk_bits > 0)
         stream_[write_chunk_] |= (value << written_chunk_bits_);
       stream_[++write_chunk_] = (value >> free_chunk_bits);
