@@ -38,72 +38,59 @@ void Node::ShowSummary() const {
          moves_performed_, moves_estimated_, cost(), hash_, cards_unsorted_);
 }
 
-void Node::Show() const {
-  last_move_.Show();
-  ShowSummary();
-  printf("Reserve: [ ");
-  for (int i = 0; i < reserve_.size(); ++i) {
-    printf("%s ", reserve_[i].ToString());
-  }
-  printf("]  Foundation: ");
-  for (int i = 0; i < 4; ++i)
-    if (foundation_[i].empty())
-      printf("[%c ] ", "SHDC"[i]);
-    else
-      printf("[%s] ", foundation_[i].Top(i).ToString());
-  puts("");
-  for (int i = 0; i < 8; ++i) {
-    printf("Tableau %2d: ", i);
-    for (int j = 0; j < tableau_[i].unsorted_size(); ++j)
-      printf("%s ", tableau_[i].card(j).ToString());
-    printf("| ");
-    for (int j = tableau_[i].unsorted_size(); j < tableau_[i].size(); ++j)
-      printf("%s ", tableau_[i].card(j).ToString());
-    puts("");
-  }
-}
-
 void Node::Show(const Move& next_move) const {
   last_move_.Show();
   ShowSummary();
   printf("Reserve: [");
   for (int i = 0; i < reserve_.size(); ++i) {
     printf(" %s", reserve_[i].ToString());
-    if ((next_move.type == kReserveToFoundation ||
-         next_move.type == kReserveToTableau) &&
-        next_move.from == i)
-      printf("==>");
+    if (next_move.type == kReserveToFoundation && next_move.from == i)
+      printf("→");
+    if (next_move.type == kReserveToTableau && next_move.from == i)
+      printf("↘");
   }
-  printf(" ] ");
-  if (next_move.type == kTableauToReserve) printf("<==");
+  printf(" ]");
+  if (next_move.type == kTableauToReserve) printf("↖");
   printf("  Foundation: ");
   for (int i = 0; i < 4; ++i) {
-    if ((next_move.type == kTableauToFoundation ||
-         next_move.type == kReserveToFoundation) &&
-        next_move.to == i)
-      printf("==>");
+    if (next_move.type == kTableauToFoundation && next_move.to == i)
+      printf("↗");
+    if (next_move.type == kReserveToFoundation && next_move.to == i)
+      printf("→");
     if (foundation_[i].empty())
       printf("[%c ] ", "SHDC"[i]);
     else
       printf("[%s] ", foundation_[i].Top(i).ToString());
   }
-  puts("");
+  printf("\nTableau: ");
+  int max_tableau_size = 0;
   for (int i = 0; i < 8; ++i) {
-    printf("Tableau %2d: ", i);
-    for (int j = 0; j < tableau_[i].unsorted_size(); ++j)
-      printf("%s ", tableau_[i].card(j).ToString());
-    printf("| ");
-    for (int j = tableau_[i].unsorted_size(); j < tableau_[i].size(); ++j)
-      printf("%s ", tableau_[i].card(j).ToString());
-    if ((next_move.type == kTableauToFoundation ||
-         next_move.type == kTableauToReserve ||
-         next_move.type == kTableauToTableau) &&
-        next_move.from == i)
-      printf("==>");
-    if ((next_move.type == kReserveToTableau ||
-         next_move.type == kTableauToTableau) &&
-        next_move.to == i)
-      printf("<==");
+    max_tableau_size = max(max_tableau_size, tableau_[i].size());
+    printf("%d   ", i);
+  }
+  puts("");
+  for (int j = 0; j <= max_tableau_size; ++j) {
+    printf("        ");
+    for (int i = 0; i < 8; ++i) {
+      if (j < tableau_[i].size()) {
+        bool underline = (j == tableau_[i].unsorted_size());
+        printf("%s  ", tableau_[i].card(j).ToString(underline));
+        continue;
+      }
+      const char* note = "    ";
+      if (j == tableau_[i].size()) {
+        if (next_move.type == kTableauToFoundation && next_move.from == i)
+          note = "↗   ";
+        if (next_move.type == kTableauToReserve && next_move.from == i)
+          note = "↖   ";
+        if (next_move.type == kTableauToTableau && next_move.from == i)
+          note = next_move.from < next_move.to ? "↘   " : "↙   ";
+        if ((next_move.type == kReserveToTableau && next_move.to == i) ||
+            (next_move.type == kTableauToTableau && next_move.to == i))
+          note = "↑   ";
+      }
+      printf("%s", note);
+    }
     puts("");
   }
 }

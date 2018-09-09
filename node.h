@@ -322,8 +322,7 @@ class Node {
 
   void PlayMoves(const vector<Move>& moves);
   void ShowSummary() const;
-  void Show() const;
-  void Show(const Move& next_move) const;
+  void Show(const Move& next_move = Move()) const;
 
   const Reserve& reserve() const { return reserve_; }
   const Foundation& foundation(int f) const { return foundation_[f]; }

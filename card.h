@@ -33,10 +33,10 @@ class Card {
   bool operator==(const Card& card) const { return card_ == card.card_; }
   bool operator!=(const Card& card) const { return !(*this == card); }
 
-  char* ToString() const {
+  char* ToString(bool underline = false) const {
     static char str[32];
-    sprintf(str, "\e[3%dm%c%c\e[0m", 2 - color(), "A23456789TJQK"[rank()],
-            "SHDC"[suit()]);
+    sprintf(str, "\e[3%d;%dm%c%c\e[0m", 2 - color(), (underline ? 4 : 24),
+            "A23456789TJQK"[rank()], "SHDC"[suit()]);
     return str;
   }
 
