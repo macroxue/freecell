@@ -8,6 +8,7 @@
 template <class T, int N>
 class Array {
  public:
+  int max_size() const { return N; }
   int size() const { return size_; }
   bool empty() const { return size_ == 0; }
 
@@ -25,7 +26,7 @@ class Array {
   }
 
   void push_back(const T& c) {
-    assert(size_ < 4);
+    assert(size_ < N);
     items_[size_++] = c;
   }
 
