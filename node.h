@@ -336,7 +336,10 @@ class Node {
   void set_moves_performed(int moves) { moves_performed_ = moves; }
   int moves_estimated() const { return moves_estimated_; }
   int cost() const {
-    return moves_estimated_ + cards_unsorted_ + reserve_.size();
+    int color_diff =
+        abs(foundation_[SPADE].size() - foundation_[HEART].size() -
+            foundation_[DIAMOND].size() + foundation_[CLUB].size());
+    return moves_estimated_ + cards_unsorted_ + reserve_.size() + color_diff;
   }
   int cards_unsorted() const { return cards_unsorted_; }
 
