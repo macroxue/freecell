@@ -1,16 +1,17 @@
 #include "deals.h"
 #include "node.h"
+#include "options.h"
 
 int main(int argc, char* argv[]) {
-  int seed = 1;
-  if (argc > 1) seed = atoi(argv[1]);
+  options = Options(argc, argv);
 
-  Node layout(seed);
-  if (seed < 0) layout.set_cards(GetDeal(-seed));
+  Node layout(options.seed);
+  if (options.seed < 0) layout.set_cards(GetDeal(-options.seed));
 
-  auto moves = DecodeSolution(ReadSolution(seed));
+  auto moves = DecodeSolution(ReadSolution(options.seed));
   for (const auto& move : moves) {
     Node previous(layout);
+    if (previous.cards_unsorted() == 0) break;
     layout.PlayMoves({move});
     previous.Show(layout.last_move());
   }

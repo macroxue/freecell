@@ -34,8 +34,9 @@ void Node::InitializeHashRand(int count, vector<unsigned>* rand) {
 }
 
 void Node::ShowSummary() const {
-  printf("\tMoves: %d  Estimate: %d  Cost: %d  Hash: %u Unsorted: %d\n",
-         moves_performed_, moves_estimated_, cost(), hash_, cards_unsorted_);
+  printf("\tMoves: %d  Estimate: %d  Auto: %d  Cost: %d  Unsorted: %d\n",
+         moves_performed_, moves_estimated_, auto_plays, cost(),
+         cards_unsorted_);
 }
 
 void Node::Show(const Move& next_move) const {
@@ -96,24 +97,31 @@ void Node::Show(const Move& next_move) const {
 }
 
 void Node::PlayMoves(const vector<Move>& moves) {
+  AutoPlay();
   for (const auto& move : moves) {
     switch (move.type) {
       case kNone:
         break;
       case kReserveToFoundation:
-        ReserveToFoundation(move.from);
+        if (CanAutoPlay(reserve_[move.from]))
+          ReserveToFoundation(move.from, true)->AutoPlay();
+        else
+          ReserveToFoundation(move.from)->AutoPlay();
         break;
       case kReserveToTableau:
-        ReserveToTableau(move.from, move.to);
+        ReserveToTableau(move.from, move.to)->AutoPlay();
         break;
       case kTableauToFoundation:
-        TableauToFoundation(move.from);
+        if (CanAutoPlay(tableau_[move.from].Top()))
+          TableauToFoundation(move.from, true)->AutoPlay();
+        else
+          TableauToFoundation(move.from)->AutoPlay();
         break;
       case kTableauToReserve:
-        TableauToReserve(move.from);
+        TableauToReserve(move.from)->AutoPlay();
         break;
       case kTableauToTableau:
-        TableauToTableau(move.from, move.to);
+        TableauToTableau(move.from, move.to)->AutoPlay();
     }
   }
 }
@@ -147,7 +155,7 @@ string Node::CompleteSolution() {
       }
       all_tableau_empty &= tableau_[i].empty();
     }
-    if (!progress) {
+    if (!progress && !reserve_.empty() && !all_tableau_empty) {
       Show();
       assert(!"No progress completing solution");
     }

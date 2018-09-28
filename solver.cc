@@ -9,6 +9,7 @@ using namespace std;
 #include "deals.h"
 #include "hash_table.h"
 #include "node.h"
+#include "options.h"
 
 class Beam {
  public:
@@ -310,38 +311,33 @@ void Beam::PrefixSearch(const Node& layout, vector<Move> moves) {
         puts(code.c_str());
       }
     }
-    start += 20;
+    start += options.auto_play ? 10 : 20;
   } while (start < moves.size());
   if (!solved) puts("No solution");
 }
 
 int main(int argc, char* argv[]) {
-  int seed = 1;
-  int beam_size = 1 << 15;
-  int num_beams = 1;
-
-  if (argc > 1) seed = atoi(argv[1]);
-  if (argc > 2) beam_size = 1 << atoi(argv[2]);
-  if (argc > 3) num_beams = atoi(argv[3]);
+  options = Options(argc, argv);
 
   Node::Initialize();
 
-  Node layout(seed);
-  if (seed < 0) layout.set_cards(GetDeal(-seed));
+  Node layout(options.seed);
+  if (options.seed < 0) layout.set_cards(GetDeal(-options.seed));
   layout.Show();
 
   string code;
-  if (ftell(stdin) != -1) code = ReadSolution(seed);
+  if (ftell(stdin) != -1) code = ReadSolution(options.seed);
   auto moves = DecodeSolution(code);
 
-  for (int i = 0; i < num_beams; ++i)
-    beams.emplace_back(new Beam(seed, beam_size, i, num_beams));
+  for (int i = 0; i < options.num_beams; ++i)
+    beams.emplace_back(
+        new Beam(options.seed, options.beam_size, i, options.num_beams));
 
   vector<std::unique_ptr<std::thread>> threads;
-  for (int i = 0; i < num_beams; ++i)
+  for (int i = 0; i < options.num_beams; ++i)
     threads.emplace_back(new std::thread(
         std::bind(&Beam::PrefixSearch, beams[i].get(), layout, moves)));
-  for (int i = 0; i < num_beams; ++i) threads[i]->join();
+  for (int i = 0; i < options.num_beams; ++i) threads[i]->join();
 
   return 0;
 }

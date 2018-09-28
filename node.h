@@ -15,6 +15,7 @@ using namespace std;
 #include "foundation.h"
 #include "list.h"
 #include "move.h"
+#include "options.h"
 #include "tableau.h"
 
 static constexpr int kTotalCards = 52;
@@ -59,6 +60,7 @@ class Node {
 
     reverse(cards.begin(), cards.end());
     set_cards(cards);
+    AutoPlay();
   }
 
   void set_cards(const vector<Card>& cards) {
@@ -146,7 +148,7 @@ class Node {
       if (AllowReserveToFoundation()) {
         auto f = FindFoundation(card);
         if (f >= 0 && AllowReserveToFoundation(f)) {
-          new_nodes.Append(pool->New(*this)->ReserveToFoundation(r));
+          new_nodes.Append(pool->New(*this)->ReserveToFoundation(r)->AutoPlay());
         }
       }
       // only need to try one empty tableau if any.
@@ -154,7 +156,7 @@ class Node {
       for (int i = 0; i < 8; ++i) {
         if (tableau_[i].Accepting(card) && AllowReserveToTableau(r, i)) {
           if (!tableau_[i].empty() || !tried_empty_tableau) {
-            new_nodes.Append(pool->New(*this)->ReserveToTableau(r, i));
+            new_nodes.Append(pool->New(*this)->ReserveToTableau(r, i)->AutoPlay());
             if (tableau_[i].empty()) tried_empty_tableau = true;
           }
         }
@@ -167,7 +169,7 @@ class Node {
         auto card = tableau_[i].Top();
         auto f = FindFoundation(card);
         if (f >= 0 && AllowTableauToFoundation(i, f))
-          new_nodes.Append(pool->New(*this)->TableauToFoundation(i));
+          new_nodes.Append(pool->New(*this)->TableauToFoundation(i)->AutoPlay());
       }
 
       for (int j = 0; j < 8; ++j) {
@@ -182,16 +184,53 @@ class Node {
             continue;
           // TODO(hanhong): only need to try one empty tableau if any.
           if (tableau_[j].empty() || count <= MaxSuperMoveSize(i, j))
-            new_nodes.Append(pool->New(*this)->TableauToTableau(i, j));
+            new_nodes.Append(pool->New(*this)->TableauToTableau(i, j)->AutoPlay());
         }
       }
 
       if (reserve_.size() < reserve_.max_size() && AllowTableauToReserve(i)) {
-        new_nodes.Append(pool->New(*this)->TableauToReserve(i));
+        new_nodes.Append(pool->New(*this)->TableauToReserve(i)->AutoPlay());
       }
     }
+
     EncodeMoves(new_nodes);
     return new_nodes;
+  }
+
+  bool CanAutoPlay(Card card) {
+    if (!options.auto_play) return false;
+
+    if (!foundation_[card.suit()].Accepting(card)) return false;
+    if (card.rank() <= R2) return true;
+    if (card.color() == RED) {
+      return foundation_[SPADE].Has(Card(SPADE, card.rank() - 1))
+          && foundation_[CLUB].Has(Card(CLUB, card.rank() - 1));
+    } else {
+      return foundation_[HEART].Has(Card(HEART, card.rank() - 1))
+          && foundation_[DIAMOND].Has(Card(DIAMOND, card.rank() - 1));
+    }
+  }
+
+  Node* AutoPlay() {
+    if (!options.auto_play) return this;
+
+    unsigned old_auto_plays;
+    do {
+      old_auto_plays = auto_plays;
+      for (int i = 0; i < reserve_.size(); ++i) {
+        if (CanAutoPlay(reserve_[i])) {
+          ReserveToFoundation(i, true);
+          ++auto_plays;
+        }
+      }
+      for (int i = 0; i < 8; ++i) {
+        if (!tableau_[i].empty() && CanAutoPlay(tableau_[i].Top())) {
+          TableauToFoundation(i, true);
+          ++auto_plays;
+        }
+      }
+    } while (auto_plays > old_auto_plays);
+    return this;
   }
 
   int MaxSuperMoveSize(int from, int to) const {
@@ -212,13 +251,15 @@ class Node {
     return -1;
   }
 
-  Node* ReserveToFoundation(int r) {
+  Node* ReserveToFoundation(int r, bool auto_play = false) {
     Card card = reserve_[r];
     reserve_.erase(r);
     foundation_[card.suit()].Push(card);
     moves_estimated_ -= 1;
-    last_move_ = Move(kReserveToFoundation, r, card.suit());
-    moves_performed_++;
+    if (!auto_play) {
+      last_move_ = Move(kReserveToFoundation, r, card.suit());
+      moves_performed_++;
+    }
     CheckInvariant();
     return this;
   }
@@ -235,14 +276,16 @@ class Node {
     return this;
   }
 
-  Node* TableauToFoundation(int t) {
+  Node* TableauToFoundation(int t, bool auto_play = false) {
     auto card = tableau_[t].Top();
     int new_sorted = tableau_[t].Pop();
     foundation_[card.suit()].Push(card);
     cards_unsorted_ -= new_sorted;
     moves_estimated_ -= 1;
-    last_move_ = Move(kTableauToFoundation, t, card.suit());
-    moves_performed_++;
+    if (!auto_play) {
+      last_move_ = Move(kTableauToFoundation, t, card.suit());
+      moves_performed_++;
+    }
     LiftMoveRestriction(t);
     CheckInvariant();
     return this;
@@ -336,9 +379,11 @@ class Node {
   void set_moves_performed(int moves) { moves_performed_ = moves; }
   int moves_estimated() const { return moves_estimated_; }
   int cost() const {
-    int color_diff =
-        abs(foundation_[SPADE].size() - foundation_[HEART].size() -
-            foundation_[DIAMOND].size() + foundation_[CLUB].size());
+    int color_diff = 0;
+    if (options.minimize_color_diff) {
+      color_diff = abs(foundation_[SPADE].size() - foundation_[HEART].size() -
+                       foundation_[DIAMOND].size() + foundation_[CLUB].size());
+    }
     return moves_estimated_ + cards_unsorted_ + reserve_.size() + color_diff;
   }
   int cards_unsorted() const { return cards_unsorted_; }
@@ -405,6 +450,7 @@ class Node {
   unsigned char cards_unsorted_ = 0;
   unsigned char moves_performed_ = 0;
   unsigned char moves_estimated_ = 0;
+  unsigned char auto_plays = 0;
   unsigned hash_ = 0;
 
   struct M {

@@ -17,7 +17,7 @@ bit_stream_test: bit_stream_test.cc bit_stream.h
 	g++ -g -std=c++0x -o $@ $(filter %.cc,$^)
 	./$@
 
-NODE_SRC=node.cc node.h list.h move.cc move.h \
+NODE_SRC=node.cc node.h list.h move.cc move.h options.cc options.h \
 				 tableau.cc tableau.h foundation.h array.h card.h bit_stream.h
 
 node_test: node_test.cc $(NODE_SRC)

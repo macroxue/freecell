@@ -25,6 +25,10 @@ class Foundation {
     return card.rank() == size_;
   }
 
+  bool Has(Card card) const {
+    return size_ >= 1 && card.rank() <= size_ - 1;
+  }
+
   bool empty() const { return !size(); }
   int size() const { return size_; }
 
