@@ -198,9 +198,10 @@ class Node {
   }
 
   bool CanAutoPlay(Card card) {
-    if (!options.auto_play) return false;
+    if (!options.auto_play && !options.max_auto_play) return false;
 
     if (!foundation_[card.suit()].Accepting(card)) return false;
+    if (options.max_auto_play) return true;
     if (card.rank() <= R2) return true;
     if (card.color() == RED) {
       return foundation_[SPADE].Has(Card(SPADE, card.rank() - 1))
@@ -212,7 +213,7 @@ class Node {
   }
 
   Node* AutoPlay() {
-    if (!options.auto_play) return this;
+    if (!options.auto_play && !options.max_auto_play) return this;
 
     unsigned old_auto_plays;
     do {
