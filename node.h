@@ -105,8 +105,9 @@ class Node {
   */
   bool AllowReserveToFoundation() const {
     return last_move_.type != kReserveToTableau &&
-           last_move_.type != kTableauToTableau &&
-           last_move_.type != kTableauToReserve;
+           (options.auto_play || options.max_auto_play ||
+            (last_move_.type != kTableauToTableau &&
+             last_move_.type != kTableauToReserve));
   }
   bool AllowReserveToFoundation(int f) const {
     return !((last_move_.type == kReserveToFoundation && f != last_move_.to)) &&
