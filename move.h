@@ -32,7 +32,7 @@ struct Move {
   unsigned char to : 4;
 };
 
-string ReadSolution(int seed);
+string ReadSolution(int& seed);
 vector<Move> DecodeSolution(const string& code);
 
 #endif

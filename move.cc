@@ -55,15 +55,13 @@ void Move::Show() const {
   }
 }
 
-string ReadSolution(int seed) {
-  int solution_seed;
+string ReadSolution(int& solution_seed) {
   char solution_code[1024];
   int items = scanf("%d:%s", &solution_seed, solution_code);
   if (items != 2) {
     puts("failed to read solution");
     exit(1);
   }
-  assert(solution_seed == seed);
   return solution_code;
 }
 
