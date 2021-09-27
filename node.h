@@ -173,6 +173,7 @@ class Node {
           new_nodes.Append(pool->New(*this)->TableauToFoundation(i)->AutoPlay());
       }
 
+      bool tried_empty_tableau = false;
       for (int j = 0; j < 8; ++j) {
         if (j == i) continue;
         if (!AllowTableauToTableau(i, j)) continue;
@@ -183,9 +184,13 @@ class Node {
           if (tableau_[j].empty() && tableau_[i].unsorted_size() == 0 &&
               tableau_[i].sorted_size() <= MaxSuperMoveSize(i, j))
             continue;
-          // TODO(hanhong): only need to try one empty tableau if any.
-          if (tableau_[j].empty() || count <= MaxSuperMoveSize(i, j))
+          // Only need to try one empty tableau if any.
+          if (tableau_[j].empty() || count <= MaxSuperMoveSize(i, j)) {
+            if (tableau_[j].empty())
+              if (tried_empty_tableau) continue;
+              else tried_empty_tableau = true;
             new_nodes.Append(pool->New(*this)->TableauToTableau(i, j)->AutoPlay());
+          }
         }
       }
 
