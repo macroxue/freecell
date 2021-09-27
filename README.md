@@ -93,7 +93,7 @@ Tableau: 1   2   3   4   5   6   7   8
 ...
 ```
 
-# Statistics
+## Statistics
 Below are statistics of the first 2000 games, with `./solver -A -n8 <game#> 18`.
 Among the 2000, the only unsolvable game using maximum auto moves is 1941, which
 is solvable in 36 moves using safe auto moves. The average number of moves for
@@ -102,32 +102,32 @@ the solvable games is 25.54.
 ![](https://github.com/macroxue/freecell/blob/master/statistics.2k.png)
 
 
- | Moves | # Games |
- |-------|---------|
- | 13    | 1       |
- | 14    | 1       |
- | 15    | 5       |
- | 16    | 12      |
- | 17    | 22      |
- | 18    | 36      |
- | 19    | 47      |
- | 20    | 69      |
- | 21    | 107     |
- | 22    | 132     |
- | 23    | 178     |
- | 24    | 188     |
- | 25    | 205     |
- | 26    | 205     |
- | 27    | 172     |
- | 28    | 157     |
- | 29    | 144     |
- | 30    | 112     |
- | 31    | 79      |
- | 32    | 55      |
- | 33    | 33      |
- | 34    | 15      |
- | 35    | 12      |
- | 36    | 5       |
- | 37    | 5       |
- | 40    | 1       |
- | 41    | 1       |
+ | # Moves | # Games |
+ |---------|---------|
+ | 13      | 1       |
+ | 14      | 1       |
+ | 15      | 5       |
+ | 16      | 12      |
+ | 17      | 22      |
+ | 18      | 36      |
+ | 19      | 47      |
+ | 20      | 69      |
+ | 21      | 107     |
+ | 22      | 132     |
+ | 23      | 178     |
+ | 24      | 188     |
+ | 25      | 205     |
+ | 26      | 205     |
+ | 27      | 172     |
+ | 28      | 157     |
+ | 29      | 144     |
+ | 30      | 112     |
+ | 31      | 79      |
+ | 32      | 55      |
+ | 33      | 33      |
+ | 34      | 15      |
+ | 35      | 12      |
+ | 36      | 5       |
+ | 37      | 5       |
+ | 40      | 1       |
+ | 41      | 1       |
