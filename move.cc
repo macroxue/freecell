@@ -2,20 +2,20 @@
 #include "node.h"
 
 Move::Move(char from, char to) {
-  if ('0' <= from && from <= '7') {
+  if ('1' <= from && from <= '8') {
     if (to == 'h')
-      *this = Move(kTableauToFoundation, from - '0');
+      *this = Move(kTableauToFoundation, from - '1');
     else if (to == 'r')
-      *this = Move(kTableauToReserve, from - '0');
-    else if ('0' <= to && to <= '7')
-      *this = Move(kTableauToTableau, from - '0', to - '0');
+      *this = Move(kTableauToReserve, from - '1');
+    else if ('1' <= to && to <= '8')
+      *this = Move(kTableauToTableau, from - '1', to - '1');
     else
       assert(!"Unknown encoding");
   } else if ('a' <= from && from < 'h') {
     if (to == 'h')
       *this = Move(kReserveToFoundation, from - 'a');
-    else if ('0' <= to && to <= '7')
-      *this = Move(kReserveToTableau, from - 'a', to - '0');
+    else if ('1' <= to && to <= '8')
+      *this = Move(kReserveToTableau, from - 'a', to - '1');
     else
       assert(!"Unknown encoding");
   }
@@ -24,15 +24,15 @@ Move::Move(char from, char to) {
 string Move::Encode() const {
   switch (type) {
     case kTableauToFoundation:
-      return string("") + char('0' + from) + char('h');
+      return string("") + char('1' + from) + char('h');
     case kTableauToReserve:
-      return string("") + char('0' + from) + char('r');
+      return string("") + char('1' + from) + char('r');
     case kTableauToTableau:
-      return string("") + char('0' + from) + char('0' + to);
+      return string("") + char('1' + from) + char('1' + to);
     case kReserveToFoundation:
       return string("") + char('a' + from) + char('h');
     case kReserveToTableau:
-      return string("") + char('a' + from) + char('0' + to);
+      return string("") + char('a' + from) + char('1' + to);
     default:
       return "";
   }
@@ -41,15 +41,15 @@ string Move::Encode() const {
 void Move::Show() const {
   switch (type) {
     case kTableauToFoundation:
-      return (void)printf("==> tableau %d to foundation", from);
+      return (void)printf("==> tableau %c to foundation", '1' + from);
     case kTableauToReserve:
-      return (void)printf("==> tableau %d to reserve", from);
+      return (void)printf("==> tableau %c to reserve", '1' + from);
     case kTableauToTableau:
-      return (void)printf("==> tableau %d to tableau %d", from, to);
+      return (void)printf("==> tableau %c to tableau %c", '1' + from, '1' + to);
     case kReserveToFoundation:
-      return (void)printf("==> reserve %d to foundation", from);
+      return (void)printf("==> reserve %c to foundation", 'a' + from);
     case kReserveToTableau:
-      return (void)printf("==> reserve %d to tableau %d", from, to);
+      return (void)printf("==> reserve %c to tableau %c", 'a' + from, '1' + to);
     default:
       return;
   }

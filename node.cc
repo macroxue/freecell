@@ -67,7 +67,7 @@ void Node::Show(const Move& next_move) const {
   int max_tableau_size = 0;
   for (int i = 0; i < 8; ++i) {
     max_tableau_size = max(max_tableau_size, tableau_[i].size());
-    printf("%d   ", i);
+    printf("%c   ", '1' + i);
   }
   puts("");
   for (int j = 0; j <= max_tableau_size; ++j) {

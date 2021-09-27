@@ -7,7 +7,6 @@ int main(int argc, char* argv[]) {
 
   auto solution = ReadSolution(options.seed);
   auto foundation_moves = std::count(solution.begin(), solution.end(), 'h');
-  printf("foundation_moves:%ld\n", foundation_moves);
   options.max_auto_play = (foundation_moves == 0);
   options.auto_play = (foundation_moves < 52);
 
