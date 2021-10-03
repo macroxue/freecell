@@ -96,50 +96,94 @@ class Node {
     return chaos;
   }
 
+  MoveType last_move_type() const {
+    return static_cast<MoveType>(last_auto_move_.type == kNone ?
+                                 last_move_.type : last_auto_move_.type);
+  }
+  int last_move_from() const {
+    return last_auto_move_.type == kNone ? last_move_.from : last_auto_move_.from;
+  }
+  int last_move_to() const {
+    return last_auto_move_.type == kNone ? last_move_.to : last_auto_move_.to;
+  }
+
   /* Move priorites:
      reserve -> foundation
      tableau -> foundation
      reserve -> tableau
      tableau -> tableau
      tableau -> reserve
+
+   Triangle moves to avoid:
+    * tableau -> tableau/reserve -> foundation  should be  tableau -> foundation
+    * reserve -> tableau -> foundation          should be  reserve -> foundation
+    * tableau -> reserve -> tableau             should be  tableau -> tableau
+    * tableau -> tableau -> reserve             should be  tableau -> reserve
+
+   Move matrix:
+   r1->f1  allows        allows       allows        allows         allows
+           r2->f2        all t->f     all r->t      all t->t       all t->r
+           if f1 <= f2
+   t1->f1  allows        allows       allows        allows         allows
+           r->f1         t2->f2       all r->t      all t->t       all t->r
+                         if f1 == f2
+                         or t1 <= t2
+   r1->t1  disallows     disallows    allows        allows         allows
+           all r->f      all t->f     r2->t2        multi t1->t2   t2->r2
+                                      if t1 == t2   or t2->t3      if t1!=t2
+                                      or r1 <= r2
+   t1->t2  disallows     allows       allows        allows         allows
+           all r->f      t1->f        r->t1         some t->t      t3->r
+                                                                   if t3!=t2
+   t1->r1  disallows     allows       allows        allows         allows
+           all r->f      t1->f        r->t1         t1->t2         t2->r2
+                                      disallows     or t2->t1      if t1<=t2
+                                      r1->t
   */
   bool AllowReserveToFoundation() const {
-    return last_move_.type != kReserveToTableau &&
-           (options.auto_play || options.max_auto_play ||
-            (last_move_.type != kTableauToTableau &&
-             last_move_.type != kTableauToReserve));
+    if (options.max_auto_play) return false;
+    return last_move_type() != kReserveToTableau &&
+           last_move_type() != kTableauToTableau &&
+           last_move_type() != kTableauToReserve;
   }
   bool AllowReserveToFoundation(int f) const {
-    return !((last_move_.type == kReserveToFoundation && f != last_move_.to)) &&
-           !((last_move_.type == kTableauToFoundation && f != last_move_.to));
+    if (last_move_type() == kReserveToFoundation) return last_move_to() <= f;
+    if (last_move_type() == kTableauToFoundation) return last_move_to() == f;
+    return true;
   }
   bool AllowTableauToFoundation() const {
-    return !(last_move_.type == kReserveToTableau);
+    if (options.max_auto_play) return false;
+    return last_move_type() != kReserveToTableau;
   }
   bool AllowTableauToFoundation(int t, int f) const {
-    return !(last_move_.type == kTableauToFoundation && last_move_.to != f &&
-             last_move_.from > t) &&
-           !(last_move_.type == kTableauToTableau && t != last_move_.from &&
-             t != last_move_.to) &&
-           !(last_move_.type == kTableauToReserve && last_move_.from != t);
+    if (last_move_type() == kTableauToFoundation)
+      return last_move_to() == f || last_move_from() <= t;
+    if (last_move_type() == kTableauToTableau) return last_move_from() == t;
+    if (last_move_type() == kTableauToReserve) return last_move_from() == t;
+    return true;
   }
   bool AllowReserveToTableau(int r, int t) const {
-    return !(last_move_.type == kTableauToTableau && t != last_move_.from &&
-             t != last_move_.to) &&
-           !(last_move_.type == kTableauToReserve && r == last_move_.to &&
-             t == last_move_.from);
+    if (last_move_type() == kReserveToTableau)
+      return last_move_to() == t || last_move_from() <= r;
+    if (last_move_type() == kTableauToTableau) return t == last_move_from();
+    if (last_move_type() == kTableauToReserve)
+      return t == last_move_from() || r != last_move_to();
+    return true;
   }
   bool AllowTableauToTableau(int t1, int t2) const {
     for (int i = 0; i < forbidden_moves_.size(); ++i) {
       if (forbidden_moves_[i].from == t1 && forbidden_moves_[i].to == t2)
         return false;
     }
-    return !(last_move_.type == kTableauToReserve && last_move_.from != t1 &&
-             last_move_.from != t2);
+    if (last_move_type() == kTableauToReserve)
+      return last_move_from() == t1 || last_move_from() == t2;
+    return true;
   }
   bool AllowTableauToReserve(int t) const {
-    return !(last_move_.type == kTableauToReserve && last_move_.from > t) &&
-           !(last_move_.type == kReserveToTableau && last_move_.to == t);
+    if (last_move_type() == kReserveToTableau) return last_move_to() != t;
+    if (last_move_type() == kTableauToTableau) return last_move_to() != t;
+    if (last_move_type() == kTableauToReserve) return last_move_from() <= t;
+    return true;
   }
 
   List<Node> Expand(Pool* pool) const {
@@ -219,6 +263,7 @@ class Node {
   }
 
   Node* AutoPlay() {
+    last_auto_move_.type = kNone;
     if (!options.auto_play && !options.max_auto_play) return this;
 
     unsigned old_auto_plays;
@@ -263,7 +308,9 @@ class Node {
     reserve_.erase(r);
     foundation_[card.suit()].Push(card);
     moves_estimated_ -= 1;
-    if (!auto_play) {
+    if (auto_play) {
+      last_auto_move_ = Move(kReserveToFoundation, r, card.suit());
+    } else {
       last_move_ = Move(kReserveToFoundation, r, card.suit());
       moves_performed_++;
     }
@@ -289,7 +336,9 @@ class Node {
     foundation_[card.suit()].Push(card);
     cards_unsorted_ -= new_sorted;
     moves_estimated_ -= 1;
-    if (!auto_play) {
+    if (auto_play) {
+      last_auto_move_ = Move(kTableauToFoundation, t, card.suit());
+    } else {
       last_move_ = Move(kTableauToFoundation, t, card.suit());
       moves_performed_++;
     }
@@ -466,6 +515,7 @@ class Node {
   };
   Array<M, 4> forbidden_moves_;
   Move last_move_;
+  Move last_auto_move_;
   // Must be the last field before link pointers for copy to work.
   CompressedMoves moves_;
 
