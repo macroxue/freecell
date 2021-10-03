@@ -23,7 +23,7 @@ $ ./solver 617
 ...
 ```
 
-With auto moves:
+With safe auto moves:
 ```
 $ ./solver -a 617
 ...
