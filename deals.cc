@@ -19,6 +19,13 @@ const char* deals[] = {
     "3H JD 2S QH 9H 5D 8S 2C "
     "5C 6H 8D 2H KC 7D JH KD "
     "TD 4D KH 7H",
+    "QC 2H 5C 6H 7H 5D 8C 6D "
+    "QS KD AD AS TD 7S KC TH "
+    "7D 4D JH 5H 5S 7C 4H AH "
+    "3H AC 2S 9S 9C 2D JD 8D "
+    "3D 8H 2C 9D QD 6C KS QH "
+    "8S 3C TC KH 4C JS 6S TS "
+    "4S 3S 9H JC",
 };
 
 vector<Card> GetDeal(int seed) {

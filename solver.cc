@@ -322,7 +322,7 @@ int main(int argc, char* argv[]) {
   Node::Initialize();
 
   Node layout(options.seed);
-  if (options.seed < 0) layout.set_cards(GetDeal(-options.seed));
+  if (options.deal > 0) layout.set_cards(GetDeal(options.deal));
   layout.Show();
 
   string code;
