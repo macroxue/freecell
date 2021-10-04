@@ -134,7 +134,7 @@ class Node {
                                       or r1 <= r2
    t1->t2  disallows     allows       allows        allows         allows
            all r->f      t1->f        r->t1         some t->t      t3->r
-                                                                   if t3!=t2
+                                      or r->t2                     if t3!=t2
    t1->r1  disallows     allows       allows        allows         allows
            all r->f      t1->f        r->t1         t1->t2         t2->r2
                                       disallows     or t2->t1      if t1<=t2
@@ -165,7 +165,8 @@ class Node {
   bool AllowReserveToTableau(int r, int t) const {
     if (last_move_type() == kReserveToTableau)
       return last_move_to() == t || last_move_from() <= r;
-    if (last_move_type() == kTableauToTableau) return t == last_move_from();
+    if (last_move_type() == kTableauToTableau)
+      return t == last_move_from() || t == last_move_to();
     if (last_move_type() == kTableauToReserve)
       return t == last_move_from() || r != last_move_to();
     return true;
