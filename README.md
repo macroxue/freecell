@@ -41,6 +41,15 @@ $ ./solver -A 617
 ...
 ```
 
+Given enough resources, it was able to find a solution of 76 moves for the
+infamous 94717719 game with maximum auto moves.
+```
+$ ./solver -A -n128 94717719 20
+...
+        Moves: 76  Estimate: 0  Auto: 52  Cost: 0  Unsorted: 0
+94717719:6r565r52135157785r65b64r7r727874b71267626r64a6761rc71r141312c1723231273r343232b35r856r86b88356858r8184c835651528241r216r263r2341464342a4454r27812r2r2825
+```
+
 ### Notations
 * 12345678: Tableau
 * abcd: Freecell/Reserve
@@ -58,46 +67,14 @@ There is also a visualizer program which takes a solution from stdin and visuali
 ```
 $ ./visualizer
 617:2r4r4627724r4r42dh4r74d41r161h768383c874212rc28287272ra232383r3438585h57535h131812
-        Moves: 0  Estimate: 52  Auto: 0  Cost: 96  Unsorted: 44
-Reserve: [ ]↖  Foundation: [S ] [H ] [D ] [C ]
-Tableau: 1   2   3   4   5   6   7   8
-        7H  AH  5S  3C  5C  8S  2H  AD
-        TH  7C  QH  AS  6H  8D  AC  KD
-        TD  QS  3D  9H  6C  8H  3H  TS
-        KH  5D  9C  3S  8C  7D  4H  JC
-        4S  QC  9S  9D  7S  6D  2S  2C
-        4C  TC  2D  5H  JS  6S  JD  QD
-        JH  KC  KS  4D
-            ↖
-==> tableau 2 to reserve        Moves: 1  Estimate: 52  Auto: 0  Cost: 96  Unsorted: 43
-Reserve: [ KC ]↖  Foundation: [S ] [H ] [D ] [C ]
-Tableau: 1   2   3   4   5   6   7   8
-        7H  AH  5S  3C  5C  8S  2H  AD
-        TH  7C  QH  AS  6H  8D  AC  KD
-        TD  QS  3D  9H  6C  8H  3H  TS
-        KH  5D  9C  3S  8C  7D  4H  JC
-        4S  QC  9S  9D  7S  6D  2S  2C
-        4C  TC  2D  5H  JS  6S  JD  QD
-        JH      KS  4D
-                    ↖
-==> tableau 4 to reserve        Moves: 2  Estimate: 52  Auto: 0  Cost: 96  Unsorted: 42
-Reserve: [ KC 4D ]  Foundation: [S ] [H ] [D ] [C ]
-Tableau: 1   2   3   4   5   6   7   8
-        7H  AH  5S  3C  5C  8S  2H  AD
-        TH  7C  QH  AS  6H  8D  AC  KD
-        TD  QS  3D  9H  6C  8H  3H  TS
-        KH  5D  9C  3S  8C  7D  4H  JC
-        4S  QC  9S  9D  7S  6D  2S  2C
-        4C  TC  2D  5H  JS  6S  JD  QD
-        JH      KS  ↘       ↑
-...
 ```
+![](https://github.com/macroxue/freecell/blob/master/visualizer.png)
 
 ## Statistics
 Below are statistics of the first 2000 games, with `./solver -A -n8 <game#> 18`.
 Among the 2000, the only unsolvable game using maximum auto moves is 1941, which
-is solvable in 36 moves using safe auto moves. The average number of moves for
-the solvable games is 25.54.
+is solvable in 35 moves using safe auto moves. The average number of moves for
+the solvable games is 25.54. See full results in solutions.2k.txt.
 
 ![](https://github.com/macroxue/freecell/blob/master/statistics.2k.png)
 
