@@ -17,10 +17,12 @@ class HashTable {
   }
 
   ~HashTable() {
+#ifdef DEBUG
     const double M = 1e6;
     printf("items %.1fm  lookups %.1fm  hits %.1fm  rate %.3f\n",
            num_additions_ / M, num_lookups_ / M, num_hits_ / M,
            double(num_hits_) / num_lookups_);
+#endif
   }
 
   void Clear() {
