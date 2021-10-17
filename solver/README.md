@@ -68,7 +68,7 @@ There is also a visualizer program which takes a solution from stdin and visuali
 $ ./visualizer
 617:2r4r4627724r4r42dh4r74d41r161h768383c874212rc28287272ra232383r3438585h57535h131812
 ```
-![](https://github.com/macroxue/freecell/blob/master/visualizer.png)
+![](https://github.com/macroxue/freecell/blob/master/solver/visualizer.png)
 
 ## Statistics
 Below are statistics of the first 2000 games, with `./solver -A -n8 <game#> 18`.
@@ -76,7 +76,7 @@ Among the 2000, the only unsolvable game using maximum auto moves is 1941, which
 is solvable in 35 moves using safe auto moves. The average number of moves for
 the solvable games is 25.54. See full results in solutions.2k.txt.
 
-![](https://github.com/macroxue/freecell/blob/master/statistics.2k.png)
+![](https://github.com/macroxue/freecell/blob/master/solver/statistics.2k.png)
 
 
  | # Moves | # Games |
