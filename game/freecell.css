@@ -1,0 +1,145 @@
+@font-face {
+  font-family: DejaVu;
+  src: url('DejaVu.ttf');
+}
+body {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  background-color: darkgreen;
+  font-family: DejaVu;
+}
+
+/* Styles for the game table */
+table.table, table.reserve, table.tableau {
+  border-spacing: 5px;
+  margin: auto;
+}
+td.logo {
+  color: aqua;
+  font-size: 24px;
+  text-align: center;
+  text-shadow: 3px 3px 2px black;
+}
+div.card {
+  display: none;
+  position: absolute;
+}
+table.blackcard:hover, table.redcard:hover {
+  background: lightgrey;
+}
+table.blackcard, table.redcard, td.nocard {
+  background-color: white;
+  border: 1px solid lightgrey;
+  border-radius: 6px;
+  border-spacing: 0px;
+  font-size: 24px;
+  height: 136px;
+  width: 106px;
+  text-align: center;
+}
+table.blackcard {
+  color: black;
+}
+table.redcard {
+  color: red;
+}
+td.nocard {
+  background-color: green;
+  height: 136px;
+  width: 102px;
+}
+td.left {
+  font-size: 20px;
+  letter-spacing: -4px;
+  line-height: 1.1;
+  padding-top: 4px;
+  vertical-align: top;
+}
+td.right {
+  font-size: 20px;
+  letter-spacing: -4px;
+  line-height: 1.1;
+  vertical-align: top;
+  padding-top: 4px;
+	transform: rotate(180deg);
+}
+td.center {
+  line-height: 1.1;
+  padding: 0;
+  vertical-align: center;
+}
+td.center_large {
+  font-size: 200%;
+  line-height: 1.1;
+  padding: 0;
+  vertical-align: center;
+}
+div.up {
+}
+div.down {
+	transform: rotate(180deg);
+}
+div.pad {
+  font-size: 50%;
+}
+div.rank {
+  transform: scale(1.5, 1.5);
+}
+div.rank2 {
+  transform: scale(1.0, 1.5);
+}
+div.suit {
+  transform: scale(0.8, 0.8);
+}
+
+/* Styles for the options dialog */
+div.options {
+  background: darkgreen;
+  display: none;
+  font-size: 24px;
+  left: 0;
+  top: 0;
+  margin: auto;
+  opacity: 0.8;
+  position: relative;
+  text-align: center;
+  vertical-align: center;
+}
+label {
+  color: skyblue;
+}
+label.control {
+  font-size: 120%;
+}
+button, input, select {
+  background: darkgreen;
+  border: 0px;
+  color: yellow;
+  font-family: DejaVu;
+  font-size: 20px;
+  padding: 5px 5px;
+}
+button:hover, input:hover, select:hover {
+  background: green;
+}
+
+/* Styles for showing messages */
+div.message {
+  display: none;
+  color: yellow;
+  font-family: DejaVu;
+  font-size: 80px;
+  font-style: italic;
+  font-weight: bold;
+  left: 0;
+  position: absolute;
+  text-align: center;
+  text-shadow: 3px 3px 2px grey;
+  width: 90%;
+  z-index: 101;
+}
+

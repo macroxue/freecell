@@ -1,0 +1,66 @@
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>FreeCell</title>
+    <link rel="icon" href="dragon.png">
+    <link rel='stylesheet' href='freecell.css'></link>
+    <script src='freecell.js'/></script>
+    <script src='deck.js'/></script>
+  </head>
+  <body onload='initialize()' onresize='redraw()'>
+    <div class='options' id='options'>
+      <label for='deal_num'>Deal#:</label>
+      <input type='number' min=1 max=1000000000 size=10 id='deal_num' onchange='set_deal()'></input>
+      <label class='control' onclick='previous_deal()'>◀️ </label>
+      <label class='control' onclick='next_deal()'>▶️ </label>
+
+      <label for='select_deck'>Deck:</label>
+      <select id='select_deck' onchange='select_deck()'>
+        <option value=0 selected>Clean</option>
+        <option value=1>Standard</option>
+      </select>
+
+      <label>Moves:</label>
+      <label class='control' onclick='undo_all()'>⏮️</label>
+      <label class='control' onclick='redo_all()'>⏭️ </label>
+      <label id='moves'></label>
+      <label class='control' onclick='undo()'>◀️ </label>
+      <label class='control' onclick='redo()'>▶️ </label>
+
+      <label id='elapse' onclick='toggle_elapse()'>Time</label>
+    </div>
+
+    <table class='reserve'>
+      <tr>
+        <td class='nocard' id='r0' ondragover='accept_drop(event)'>&nbsp;</td>
+        <td class='nocard' id='r1' ondragover='accept_drop(event)'>&nbsp;</td>
+        <td class='nocard' id='r2' ondragover='accept_drop(event)'>&nbsp;</td>
+        <td class='nocard' id='r3' ondragover='accept_drop(event)'>&nbsp;</td>
+        <td class='logo' id='logo' onclick='toggle_element("options")'>
+          &nbsp;Free&nbsp;<br/>&nbsp;Cell&nbsp;
+        </td>
+        <td class='nocard' id='f0' ondragover='accept_drop(event)'><font color='black'>&spades;</font></td>
+        <td class='nocard' id='f1' ondragover='accept_drop(event)'><font color='darkred'>&hearts;</font></td>
+        <td class='nocard' id='f2' ondragover='accept_drop(event)'><font color='darkred'>&diams;</font></td>
+        <td class='nocard' id='f3' ondragover='accept_drop(event)'><font color='black'>&clubs;</font></td>
+      </tr>
+    </table>
+
+    <table class='tableau'>
+      <tr>
+        <td class='nocard' id='t0' ondragover='accept_drop(event)'></td>
+        <td class='nocard' id='t1' ondragover='accept_drop(event)'></td>
+        <td class='nocard' id='t2' ondragover='accept_drop(event)'></td>
+        <td class='nocard' id='t3' ondragover='accept_drop(event)'></td>
+        <td class='nocard' id='t4' ondragover='accept_drop(event)'></td>
+        <td class='nocard' id='t5' ondragover='accept_drop(event)'></td>
+        <td class='nocard' id='t6' ondragover='accept_drop(event)'></td>
+        <td class='nocard' id='t7' ondragover='accept_drop(event)'></td>
+      </tr>
+    </table>
+
+    <div class='message' id='message' onclick='hide_element("message")'>
+      Well done!
+    </div>
+  </body>
+</html>
