@@ -1,6 +1,9 @@
 var suits = ['&spades;', '&hearts;', '&diams;', '&clubs;'];
 var ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
 var selected_deck = 0;
+var black = 0, red = 1;
+var spades = 0, hearts = 1, diams = 2, clubs = 3;
+var ace = 0, deuce = 1;
 
 // Helpers for card properties.
 function suit(card) {
@@ -27,7 +30,7 @@ function create_clean_deck() {
     div.id = get_card_id(card, 0);
     div.style.left = rect.left;
     div.style.top = rect.top;
-    var card_color = color(card) ? 'redcard' : 'blackcard';
+    var card_color = color(card) == red ? 'redcard' : 'blackcard';
     var card_sign = ranks[rank(card)] + ' ' + suits[suit(card)];
     div.innerHTML = `
       <table class='${card_color}'>
@@ -48,7 +51,7 @@ function create_standard_deck() {
     div.id = get_card_id(card, 1);
     div.style.left = rect.left;
     div.style.top = rect.top;
-    var card_color = color(card) ? 'redcard' : 'blackcard';
+    var card_color = color(card) == red ? 'redcard' : 'blackcard';
     var suit_sign = suits[suit(card)];
     div.innerHTML = `
       <table class='${card_color}'>

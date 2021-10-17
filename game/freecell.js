@@ -1,6 +1,7 @@
 var reserves = [], foundations = [], tableaus = [];
 var reserve_signs = 'abcd', tableau_signs = '12345678';
 var current_move = -1, move_code = [], snapshots = [];
+var selected_auto_play = 'max';
 var elapse = 0, show_elapse = false;
 
 function initialize() {
@@ -8,6 +9,7 @@ function initialize() {
   create_clean_deck();
   create_standard_deck();
   document.getElementById('select_deck').value = selected_deck;
+  document.getElementById('select_auto_play').value = selected_auto_play;
   hide_element('options');
   deal_hand(Math.floor(Math.random() * 1000 * 1000 * 1000) + 1);
 
@@ -355,17 +357,38 @@ function try_tableau_to_tableau(origin_column, target_column) {
   return false;
 }
 
+function select_auto_play() {
+  selected_auto_play = document.getElementById('select_auto_play').value;
+}
+
+function is_safe_auto_play(card) {
+  if (selected_auto_play == 'none' || !can_push_to_foundation(card)) {
+    return false;
+  }
+  if (selected_auto_play == 'max' || rank(card) <= deuce) {
+    return true;
+  }
+  if (color(card) == red) {
+    return foundations[spades].length >= rank(card)
+      && foundations[clubs].length >= rank(card);
+  } else {
+    return foundations[hearts].length >= rank(card)
+      && foundations[diams].length >= rank(card);
+  }
+}
+
 function auto_play() {
   var played = true;
   while (played) {
     played = false;
     for (var index = reserves.length - 1; index >= 0; --index) {
-      if (try_reserve_to_foundation(index, false)) {
+      if (is_safe_auto_play(reserves[index]) && try_reserve_to_foundation(index, false)) {
         played = true;
       }
     }
     for (var column = 0; column < tableaus.length; ++column) {
-      if (tableaus[column].length > 0 && try_tableau_to_foundation(column, false)) {
+      if (tableaus[column].length > 0 && is_safe_auto_play(tableaus[column].last()) &&
+          try_tableau_to_foundation(column, false)) {
         played = true;
       }
     }

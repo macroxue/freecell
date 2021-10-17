@@ -9,18 +9,25 @@
   </head>
   <body onload='initialize()' onresize='redraw()'>
     <div class='options' id='options'>
-      <label for='deal_num'>Deal#:</label>
+      <label for='deal_num'>Deal</label>
       <input type='number' min=1 max=1000000000 size=10 id='deal_num' onchange='set_deal()'></input>
       <label class='control' onclick='previous_deal()'>◀️ </label>
       <label class='control' onclick='next_deal()'>▶️ </label>
 
-      <label for='select_deck'>Deck:</label>
+      <label for='select_deck'>Deck</label>
       <select id='select_deck' onchange='select_deck()'>
-        <option value=0 selected>Clean</option>
-        <option value=1>Standard</option>
+        <option value=0 selected>clean</option>
+        <option value=1>mimic</option>
       </select>
 
-      <label>Moves:</label>
+      <label for='select_auto_play'>Auto</label>
+      <select id='select_auto_play' onchange='select_auto_play()'>
+        <option value='max' selected>max</option>
+        <option value='safe'>safe</option>
+        <option value='none'>none</option>
+      </select>
+
+      <label>Moves</label>
       <label class='control' onclick='undo_all()'>⏮️</label>
       <label class='control' onclick='redo_all()'>⏭️ </label>
       <label id='moves'></label>

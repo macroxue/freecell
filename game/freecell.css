@@ -121,7 +121,7 @@ button, input, select {
   color: yellow;
   font-family: DejaVu;
   font-size: 20px;
-  padding: 5px 5px;
+  /*padding: 5px 5px;*/
 }
 button:hover, input:hover, select:hover {
   background: green;
