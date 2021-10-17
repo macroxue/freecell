@@ -231,9 +231,10 @@ class Node {
             continue;
           // Only need to try one empty tableau if any.
           if (tableau_[j].empty() || count <= MaxSuperMoveSize(i, j)) {
-            if (tableau_[j].empty())
+            if (tableau_[j].empty()) {
               if (tried_empty_tableau) continue;
               else tried_empty_tableau = true;
+            }
             new_nodes.Append(pool->New(*this)->TableauToTableau(i, j)->AutoPlay());
           }
         }
