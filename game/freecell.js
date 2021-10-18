@@ -21,6 +21,7 @@ function initialize() {
     drag_and_drop(event.dataTransfer.getData('text/plain'),
                   get_parent_card_id(event.target));
   });
+  setTimeout(() => update_elapse(), 1000);
 }
 
 function set_deal() {
@@ -73,7 +74,6 @@ function deal_hand(deal_num) {
   auto_play();
 
   elapse = 0;
-  setTimeout(() => update_elapse(), 1000);
 }
 
 function redraw() {
@@ -587,13 +587,13 @@ function toggle_element(id) {
 }
 
 function update_elapse() {
-  ++elapse;
+  if (sum_foundation_cards() < 52) {
+    ++elapse;
+  }
   if (show_elapse) {
     set_element('elapse', make_readable(elapse));
   }
-  if (sum_foundation_cards() < 52) {
-    setTimeout(() => update_elapse(), 1000);
-  }
+  setTimeout(() => update_elapse(), 1000);
 }
 
 function toggle_elapse() {
