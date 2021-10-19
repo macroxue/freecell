@@ -251,18 +251,20 @@ function try_move_card(card) {
 
 function try_move_reserve_card(index) {
   // Reserve to foundation.
-  if (try_reserve_to_foundation(index)) { return true; }
-  // Reserve to tableau, trying non-empty tableaus first.
-  var card = reserves[index];
-  for (var column = 0; column < tableaus.length; ++column) {
-    if (tableaus[column].length > 0 && try_reserve_to_tableau(index, column)) {
-      return true;
+  if (try_reserve_to_foundation(index)) {
+    return true;
+  }
+  // Reserve to tableau.
+  var targets = [];
+  for (var i = 0; i < tableaus.length; ++i) {
+    if (can_push_to_tableau(reserves[index], i)) {
+      targets.push({column:i, min_unsorted:min_unsorted_rank(tableaus[i])});
     }
   }
-  for (var column = 0; column < tableaus.length; ++column) {
-    if (tableaus[column].length == 0 && try_reserve_to_tableau(index, column)) {
-      return true;
-    }
+  if (targets.length > 0) {
+    // Prefer a tableau with higher unsorted ranks.
+    targets.sort((a, b) => { return b.min_unsorted - a.min_unsorted; });
+    return try_reserve_to_tableau(index, targets[0].column);
   }
   return false;
 }
@@ -302,18 +304,19 @@ function try_move_tableau_card(column, row) {
   for (var i = 0; i < tableaus.length; ++i) {
     var num_movables = can_move_tableau_to_tableau(column, i);
     if (num_movables > 0) {
-      targets.push([i, num_movables]);
+      targets.push({column:i, count:num_movables,
+                   min_unsorted:min_unsorted_rank(tableaus[i])});
     }
   }
   if (targets.length > 0) {
-    // Prefer moving more cards or to a longer tableau.
+    // Prefer moving more cards or to a tableau with higher unsorted ranks.
     targets.sort((a, b) => {
-      return b[1] != a[1] ? b[1] - a[1] : tableaus[b[0]].length - tableaus[a[0]].length;
+      if (b.count != a.count) {
+        return b.count - a.count;
+      }
+      return b.min_unsorted - a.min_unsorted;
     });
-    move_tableau_to_tableau(column, targets[0][0], targets[0][1]);
-    move_code.push(tableau_signs[column] + tableau_signs[targets[0][0]]);
-    auto_play();
-    return true;
+    return try_tableau_to_tableau(column, targets[0].column);
   }
 
   // Tableau to reserve.
@@ -540,6 +543,17 @@ function count_sorted(tableau) {
     ++count;
   }
   return count;
+}
+
+function min_unsorted_rank(tableau) {
+  if (tableau.length == 0) {
+    return -1;
+  }
+  var num_unsorted = tableau.length - count_sorted(tableau);
+  if (num_unsorted == 0) {
+    return rank(tableau[0]) + 1;
+  }
+  return Math.min(...tableau.slice(0, num_unsorted).map(x => rank(x)));
 }
 
 function super_move_size(origin, target) {

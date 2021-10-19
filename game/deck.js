@@ -3,7 +3,7 @@ var ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
 var selected_deck = 0;
 var black = 0, red = 1;
 var spades = 0, hearts = 1, diams = 2, clubs = 3;
-var ace = 0, deuce = 1;
+var ace = 0, deuce = 1, king = 12;
 
 // Helpers for card properties.
 function suit(card) {
