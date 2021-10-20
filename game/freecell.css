@@ -115,6 +115,15 @@ label {
 label.control {
   font-size: 120%;
 }
+label#moves {
+  color: yellow;
+  display: inline-block;
+  width: 36px;
+}
+label#elapse {
+  display: inline-block;
+  width: 72px;
+}
 button, input, select {
   background: darkgreen;
   border: 0px;
