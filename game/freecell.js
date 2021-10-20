@@ -9,10 +9,21 @@ function initialize() {
   create_clean_deck();
   create_standard_deck();
   document.getElementById('select_deck').value = selected_deck;
-  document.getElementById('select_auto_play').value = selected_auto_play;
   hide_element('options');
-  deal_hand(Math.floor(Math.random() * 1000 * 1000 * 1000) + 1);
 
+  const url_params = new URLSearchParams(window.location.search);
+  if (url_params.get('deal') != null) {
+    var deal = url_params.get('deal').split(':');
+    if (deal.length <= 1) {
+      deal_hand(parseInt(deal[0]));
+    } else {
+      play_solution(parseInt(deal[0]), deal[1]);
+    }
+  } else {
+    deal_hand(Math.floor(Math.random() * 1000 * 1000 * 1000) + 1);
+  }
+
+  document.getElementById('select_auto_play').value = selected_auto_play;
   document.addEventListener('dragstart', (event) => {
     event.dataTransfer.setData('text/plain', event.target.id);
   });
@@ -135,6 +146,47 @@ function redo_all() {
   restore(snapshots[current_move]);
 }
 
+function play_solution(deal_num, solution) {
+  var foundation_moves = (solution.match(/h/g) || []).length;
+  selected_auto_play = foundation_moves == 0 ? 'max' :
+    foundation_moves < 52 ? 'safe' : 'none';
+  show_element('options');
+  deal_hand(deal_num);
+  for (var i = 0; i < solution.length; i += 2) {
+    var from = solution[i], to = solution[i + 1];
+    var index = reserve_signs.indexOf(from);
+    if (index >= 0) {
+      if (to == 'h') {
+        try_reserve_to_foundation(index);
+        continue;
+      }
+      var column = tableau_signs.indexOf(to);
+      if (column >= 0) {
+        try_reserve_to_tableau(index, column);
+        continue;
+      }
+      continue;
+    }
+    var column = tableau_signs.indexOf(from);
+    if (column >= 0) {
+      if (to == 'h') {
+        try_tableau_to_foundation(column);
+        continue;
+      }
+      if (to == 'r') {
+        try_tableau_to_reserve(column);
+        continue;
+      }
+      var new_column = tableau_signs.indexOf(to);
+      if (new_column >= 0) {
+        try_tableau_to_tableau(column, new_column);
+        continue;
+      }
+      continue;
+    }
+  }
+}
+
 function set_card(card_id, left, top, z_index = 0) {
   var card_element = document.getElementById(card_id);
   var old_left = parseInt(card_element.style.left);
@@ -163,7 +215,7 @@ function animate_move(card_element, left, top, num_steps, step_left, step_top) {
                                   num_steps, step_left, step_top), 10);
   } else {
     card_element.style.zIndex &= 0xFF;
-    card_element.onclick = () => try_move_card(get_card(card_element.id));
+    card_element.onclick = () => move_card(get_card(card_element.id));
     card_element.ondragover = (event) => accept_drop(event);
     card_element.setAttribute('draggable', true);
   }
@@ -203,19 +255,31 @@ function get_field_type(id) {
   }
 }
 
-function drag_and_drop(origin_id, target_id) {
-  console.log(origin_id, target_id);
-  var origin_field = get_field_type(origin_id);
-  var target_field = get_field_type(target_id);
-  if (origin_field[0] == 'r') {
-    return drag_reserve_card(parseInt(origin_field[1]), target_field);
-  }
-  if (origin_field[0] == 't') {
-    return drag_tableau_card(parseInt(origin_field[1]), target_field);
+function check_for_completion() {
+  if (sum_foundation_cards() == 52) {
+    show_element('message');
+    setTimeout(() => hide_element('message'), 5000);
   }
 }
 
-function drag_reserve_card(index, target_field) {
+function drag_and_drop(origin_id, target_id) {
+  if (try_drag_and_drop(origin_id, target_id)) {
+    check_for_completion();
+  }
+}
+
+function try_drag_and_drop(origin_id, target_id) {
+  var origin_field = get_field_type(origin_id);
+  var target_field = get_field_type(target_id);
+  if (origin_field[0] == 'r') {
+    return try_drag_reserve_card(parseInt(origin_field[1]), target_field);
+  }
+  if (origin_field[0] == 't') {
+    return try_drag_tableau_card(parseInt(origin_field[1]), target_field);
+  }
+}
+
+function try_drag_reserve_card(index, target_field) {
   if (target_field[0] == 'f') {
     return try_reserve_to_foundation(index);
   }
@@ -225,7 +289,7 @@ function drag_reserve_card(index, target_field) {
   return try_reserve_to_tableau(index, parseInt(target_field[1]));
 }
 
-function drag_tableau_card(column, target_field) {
+function try_drag_tableau_card(column, target_field) {
   if (target_field[0] == 'f') {
     return try_tableau_to_foundation(column);
   }
@@ -233,6 +297,12 @@ function drag_tableau_card(column, target_field) {
     return try_tableau_to_reserve(column);
   }
   return try_tableau_to_tableau(column, parseInt(target_field[1]));
+}
+
+function move_card(card) {
+  if (try_move_card(card)) {
+    check_for_completion();
+  }
 }
 
 function try_move_card(card) {
@@ -406,11 +476,6 @@ function auto_play() {
   snapshots.push({reserves:[...reserves], foundations:copy_2d(foundations),
                  tableaus:copy_2d(tableaus), move_code:move_code});
   move_code = [];
-
-  if (sum_foundation_cards() == 52) {
-    show_element('message');
-    setTimeout(() => hide_element('message'), 5000);
-  }
 }
 
 function sum_foundation_cards() {
