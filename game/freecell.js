@@ -3,6 +3,7 @@ var reserve_signs = 'abcd', tableau_signs = '12345678';
 var current_move = -1, move_code = [], snapshots = [];
 var selected_auto_play = 'max';
 var elapse = 0, show_elapse = false;
+var solutions = {};
 
 function initialize() {
   Array.prototype.last = function() { return this[this.length - 1]; }
@@ -144,6 +145,25 @@ function redo_all() {
   current_move = snapshots.length - 1;
   set_element('moves', current_move);
   restore(snapshots[current_move]);
+}
+
+function get_solution() {
+  var deal_num = document.getElementById('deal_num').value;
+  if (deal_num <= 0 || deal_num > 2000) {
+    return;
+  }
+  if (solutions[deal_num]) {
+    play_solution(deal_num, solutions[deal_num]);
+    return;
+  }
+  var url = 'https://raw.githubusercontent.com/macroxue/freecell/master/solver/solutions.2k.txt';
+  fetch(url).then(r => r.text()).then(text => {
+    for (var line of text.split('\n')) {
+      var deal = line.split(':');
+      solutions[deal[0]] = deal[1];
+    }
+    play_solution(deal_num, solutions[deal_num]);
+  });
 }
 
 function play_solution(deal_num, solution) {
