@@ -104,6 +104,7 @@ function select_deck() {
     new_card.ondragover = old_card.ondragover;
     new_card.setAttribute('draggable', old_card.getAttribute('draggable'));
   }
+  set_cookie('deck', selected_deck.toString());
   return;
 }
 

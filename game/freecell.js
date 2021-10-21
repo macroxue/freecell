@@ -7,20 +7,24 @@ var solutions = {};
 
 function initialize() {
   Array.prototype.last = function() { return this[this.length - 1]; }
+
   create_clean_deck();
   create_picture_decks();
-  document.getElementById('select_auto_play').value = selected_auto_play;
   hide_element('options');
 
-  const url_params = new URLSearchParams(window.location.search);
-  if (url_params.get('deck') != null) {
-    var new_deck = parseInt(url_params.get('deck'));
-    if (0 <= new_deck && new_deck < deck_pictures.length) {
-      selected_deck = new_deck;
-    }
+  var new_auto_play = get_cookie('auto_play');
+  if (['max', 'safe', 'none'].includes(new_auto_play)) {
+    selected_auto_play = new_auto_play;
+  }
+  document.getElementById('select_auto_play').value = selected_auto_play;
+
+  var new_deck = parseInt(get_cookie('deck'));
+  if (0 <= new_deck && new_deck < deck_pictures.length) {
+    selected_deck = new_deck;
   }
   document.getElementById('select_deck').value = selected_deck;
 
+  const url_params = new URLSearchParams(window.location.search);
   if (url_params.get('deal') != null) {
     var deal = url_params.get('deal').split(':');
     if (deal.length <= 1) {
@@ -461,6 +465,7 @@ function try_tableau_to_tableau(origin_column, target_column) {
 
 function select_auto_play() {
   selected_auto_play = document.getElementById('select_auto_play').value;
+  set_cookie('auto_play', selected_auto_play);
 }
 
 function is_safe_auto_play(card) {
@@ -716,4 +721,22 @@ function toggle_elapse() {
 function make_readable(elapse) {
   var minutes = Math.floor(elapse / 60), seconds = elapse % 60;
   return minutes.toString() + ':' + ('0' + seconds.toString()).slice(-2);
+}
+
+function set_cookie(key, value, expiration_days = 30) {
+  var date = new Date();
+  date.setTime(date.getTime() + (expiration_days * 86400 * 1000));
+  document.cookie = key + '=' + value + ';expires=' + date.toUTCString() +
+    ';path=/;SameSite=strict';
+}
+
+function get_cookie(key) {
+  var cookies = decodeURIComponent(document.cookie).split(/; */);
+  for(var cookie of cookies) {
+    var pair = cookie.split('=');
+    if (key == pair[0]) {
+      return pair[1];
+    }
+  }
+  return '';
 }
