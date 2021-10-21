@@ -4,7 +4,7 @@ var selected_deck = 0;
 var black = 0, red = 1;
 var spades = 0, hearts = 1, diams = 2, clubs = 3;
 var ace = 0, deuce = 1, king = 12;
-var pictures = [
+var deck_pictures = [
   // clean
   ['', '', ''],
   // elf
@@ -65,7 +65,7 @@ function create_clean_deck() {
 
 function create_picture_decks() {
   var rect = get_element_position('logo');
-  for (var deck = 1; deck < pictures.length; ++deck) {
+  for (var deck = 1; deck < deck_pictures.length; ++deck) {
     for (var card = 0; card < 52; ++card) {
       var div = document.createElement('div');
       div.classList.add('card');
@@ -78,9 +78,9 @@ function create_picture_decks() {
       <table class='${card_color}'>
         <tr>${card == 0 ? standard_spade_ace : standard_deck[rank(card)]}</tr>
       </table>`.replace(/{suit_sign}/g, suit_sign)
-        .replace(/{jack}/g, pictures[deck][0])
-        .replace(/{queen}/g, pictures[deck][1])
-        .replace(/{king}/g, pictures[deck][2]);
+        .replace(/{jack}/g, deck_pictures[deck][0])
+        .replace(/{queen}/g, deck_pictures[deck][1])
+        .replace(/{king}/g, deck_pictures[deck][2]);
       document.body.appendChild(div);
     }
   }

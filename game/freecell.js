@@ -9,11 +9,18 @@ function initialize() {
   Array.prototype.last = function() { return this[this.length - 1]; }
   create_clean_deck();
   create_picture_decks();
-  document.getElementById('select_deck').value = selected_deck;
   document.getElementById('select_auto_play').value = selected_auto_play;
   hide_element('options');
 
   const url_params = new URLSearchParams(window.location.search);
+  if (url_params.get('deck') != null) {
+    var new_deck = parseInt(url_params.get('deck'));
+    if (0 <= new_deck && new_deck < deck_pictures.length) {
+      selected_deck = new_deck;
+    }
+  }
+  document.getElementById('select_deck').value = selected_deck;
+
   if (url_params.get('deal') != null) {
     var deal = url_params.get('deal').split(':');
     if (deal.length <= 1) {
