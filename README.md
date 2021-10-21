@@ -12,6 +12,7 @@ Click on the image or [here](https://macroxue.github.io/freecell/game/freecell.h
  * Tap on the "Free Cell" logo to show/hide the menu bar.
  * Undo/redo the moves to explore alternatives.
  * Tap on the "Time" label to show/hide time.
+ * Tap on the "#" sign to get a solution for any game between 1 and 221,000.
 
 # FreeCell solver
 
