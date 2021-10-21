@@ -40,6 +40,7 @@ table.blackcard, table.redcard, td.nocard {
   height: 136px;
   width: 106px;
   text-align: center;
+  overflow: hidden;
 }
 table.blackcard {
   color: black;
