@@ -10,6 +10,7 @@ function initialize() {
   create_clean_deck();
   create_picture_decks();
   document.getElementById('select_deck').value = selected_deck;
+  document.getElementById('select_auto_play').value = selected_auto_play;
   hide_element('options');
 
   const url_params = new URLSearchParams(window.location.search);
@@ -24,7 +25,6 @@ function initialize() {
     deal_hand(Math.floor(Math.random() * 1000 * 1000 * 1000) + 1);
   }
 
-  document.getElementById('select_auto_play').value = selected_auto_play;
   document.addEventListener('dragstart', (event) => {
     event.dataTransfer.setData('text/plain', event.target.id);
   });
@@ -149,14 +149,15 @@ function redo_all() {
 
 function get_solution() {
   var deal_num = document.getElementById('deal_num').value;
-  if (deal_num <= 0 || deal_num > 2000) {
+  if (deal_num <= 0 || deal_num > 221000) {
     return;
   }
   if (solutions[deal_num]) {
     play_solution(deal_num, solutions[deal_num]);
     return;
   }
-  var url = 'https://raw.githubusercontent.com/macroxue/freecell/master/solver/solutions.2k.txt';
+  var url = 'https://raw.githubusercontent.com/macroxue/freecell/master/solutions/block.'
+    + Math.ceil(deal_num / 1000).toString();
   fetch(url).then(r => r.text()).then(text => {
     for (var line of text.split('\n')) {
       var deal = line.split(':');
@@ -170,6 +171,7 @@ function play_solution(deal_num, solution) {
   var foundation_moves = (solution.match(/h/g) || []).length;
   selected_auto_play = foundation_moves == 0 ? 'max' :
     foundation_moves < 52 ? 'safe' : 'none';
+  document.getElementById('select_auto_play').value = selected_auto_play;
   show_element('options');
   deal_hand(deal_num);
   for (var i = 0; i < solution.length; i += 2) {
