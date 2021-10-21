@@ -72,11 +72,14 @@ td.center {
   padding: 0;
   vertical-align: center;
 }
-td.center_large {
+td.center_large, td.picture {
   font-size: 200%;
   line-height: 1.1;
   padding: 0;
   vertical-align: center;
+}
+td.picture {
+  transform: scale(1.5, 2.0);
 }
 div.up {
 }
@@ -108,6 +111,7 @@ div.options {
   position: relative;
   text-align: center;
   vertical-align: center;
+  z-index: 101;
 }
 label {
   color: skyblue;
@@ -125,6 +129,7 @@ label#elapse {
   width: 72px;
 }
 button, input, select {
+  appearance: none;
   background: darkgreen;
   border: 0px;
   color: yellow;

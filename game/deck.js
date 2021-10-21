@@ -4,6 +4,26 @@ var selected_deck = 0;
 var black = 0, red = 1;
 var spades = 0, hearts = 1, diams = 2, clubs = 3;
 var ace = 0, deuce = 1, king = 12;
+var pictures = [
+  // clean
+  ['', '', ''],
+  // elf
+  ['&#x1F9DD;', '&#x1F9DD;&#x200D;&#x2640;&#xFE0F;', '&#x1F9DD;&#x200D;&#x2642;&#xFE0F;'],
+  // fairy
+  ['&#x1F9DA;', '&#x1F9DA;&#x200D;&#x2640;&#xFE0F;', '&#x1F9DA;&#x200D;&#x2642;&#xFE0F;'],
+  // genie
+  ['&#x1F9DE;', '&#x1F9DE;&#x200D;&#x2640;&#xFE0F;', '&#x1F9DE;&#x200D;&#x2642;&#xFE0F;'],
+  // hero
+  ['&#x1F9B8;', '&#x1F9B8;&#x200D;&#x2640;&#xFE0F;', '&#x1F9B8;&#x200D;&#x2642;&#xFE0F;'],
+  // mage
+  ['&#x1F9D9;', '&#x1F9D9;&#x200D;&#x2640;&#xFE0F;', '&#x1F9D9;&#x200D;&#x2642;&#xFE0F;'],
+  // vampire
+  ['&#x1F9DB;', '&#x1F9DB;&#x200D;&#x2640;&#xFE0F;', '&#x1F9DB;&#x200D;&#x2642;&#xFE0F;'],
+  // villain
+  ['&#x1F9B9;', '&#x1F9B9;&#x200D;&#x2640;&#xFE0F;', '&#x1F9B9;&#x200D;&#x2642;&#xFE0F;'],
+  // zombie
+  ['&#x1F9DF;', '&#x1F9DF;&#x200D;&#x2640;&#xFE0F;', '&#x1F9DF;&#x200D;&#x2642;&#xFE0F;'],
+];
 
 // Helpers for card properties.
 function suit(card) {
@@ -43,21 +63,26 @@ function create_clean_deck() {
   }
 }
 
-function create_standard_deck() {
+function create_picture_decks() {
   var rect = get_element_position('logo');
-  for (var card = 0; card < 52; ++card) {
-    var div = document.createElement('div');
-    div.classList.add('card');
-    div.id = get_card_id(card, 1);
-    div.style.left = rect.left;
-    div.style.top = rect.top;
-    var card_color = color(card) == red ? 'redcard' : 'blackcard';
-    var suit_sign = suits[suit(card)];
-    div.innerHTML = `
+  for (var deck = 1; deck < pictures.length; ++deck) {
+    for (var card = 0; card < 52; ++card) {
+      var div = document.createElement('div');
+      div.classList.add('card');
+      div.id = get_card_id(card, deck);
+      div.style.left = rect.left;
+      div.style.top = rect.top;
+      var card_color = color(card) == red ? 'redcard' : 'blackcard';
+      var suit_sign = suits[suit(card)];
+      div.innerHTML = `
       <table class='${card_color}'>
         <tr>${card == 0 ? standard_spade_ace : standard_deck[rank(card)]}</tr>
-      </table>`.replace(/{suit_sign}/g, suit_sign);
-    document.body.appendChild(div);
+      </table>`.replace(/{suit_sign}/g, suit_sign)
+        .replace(/{jack}/g, pictures[deck][0])
+        .replace(/{queen}/g, pictures[deck][1])
+        .replace(/{king}/g, pictures[deck][2]);
+      document.body.appendChild(div);
+    }
   }
 }
 
@@ -76,6 +101,8 @@ function select_deck() {
     new_card.style.top = old_card.style.top;
     new_card.style.zIndex = old_card.style.zIndex;
     new_card.onclick = old_card.onclick;
+    new_card.ondragover = old_card.ondragover;
+    new_card.setAttribute('draggable', old_card.getAttribute('draggable'));
   }
   return;
 }
@@ -89,14 +116,14 @@ var standard_spade_ace = `
 var standard_deck = [
   `
     <td class='left'><div class='rank'>A</div><div class='suit'>{suit_sign}</div></td>
-    <td class='center'><div class='up'>{suit_sign}</div></td>
+    <td class='center'><div class='up'>&nbsp;{suit_sign}&nbsp;</div></td>
     <td class='right'><div class='rank'>A</div><div class='suit'>{suit_sign}</div></td>
   `,
   `
     <td class='left'><div class='rank'>2</div><div class='suit'>{suit_sign}</div></td>
     <td class='center'>&nbsp;</td>
     <td class='center'>
-      <div class='up'>{suit_sign}<br/>&nbsp;</div>
+      <div class='up'>&nbsp;{suit_sign}&nbsp;<br/>&nbsp;</div>
       <div class='down'>{suit_sign}<br/>&nbsp;</div>
     </td>
     <td class='center'>&nbsp;</td>
@@ -106,7 +133,7 @@ var standard_deck = [
     <td class='left'><div class='rank'>3</div><div class='suit'>{suit_sign}</div></td>
     <td class='center'>&nbsp;</td>
     <td class='center'>
-      <div class='up'>{suit_sign}</div>
+      <div class='up'>&nbsp;{suit_sign}&nbsp;</div>
       <div class='pad'>&nbsp;</div>
       <div class='up'>{suit_sign}</div>
       <div class='pad'>&nbsp;</div>
@@ -248,26 +275,17 @@ var standard_deck = [
   `,
   `
     <td class='left'><div class='rank'>J</div><div class='suit'>{suit_sign}</div></td>
-    <td class='center'>
-      <div class='up'>{suit_sign}&nbsp;<font style='font-size:200%'>J</font></div>
-      <div class='down'>{suit_sign}&nbsp;<font style='font-size:200%'>J</font></div>
-    </td>
+    <td class='picture'>{jack}</td>
     <td class='right'><div class='rank'>J</div><div class='suit'>{suit_sign}</div></td>
   `,
   `
     <td class='left'><div class='rank'>Q</div><div class='suit'>{suit_sign}</div></td>
-    <td class='center'>
-      <div class='up'>{suit_sign}<font style='font-size:200%'>Q</font></div>
-      <div class='down'>{suit_sign}<font style='font-size:200%'>Q</font></div>
-    </td>
+    <td class='picture'>{queen}</td>
     <td class='right'><div class='rank'>Q</div><div class='suit'>{suit_sign}</div></td>
   `,
   `
     <td class='left'><div class='rank'>K</div><div class='suit'>{suit_sign}</div></td>
-    <td class='center'>
-      <div class='up'>{suit_sign}<font style='font-size:200%'>K</font></div>
-      <div class='down'>{suit_sign}<font style='font-size:200%'>K</font></div>
-    </td>
+    <td class='picture'>{king}</td>
     <td class='right'><div class='rank'>K</div><div class='suit'>{suit_sign}</div></td>
   `
 ];

@@ -8,7 +8,7 @@ var solutions = {};
 function initialize() {
   Array.prototype.last = function() { return this[this.length - 1]; }
   create_clean_deck();
-  create_standard_deck();
+  create_picture_decks();
   document.getElementById('select_deck').value = selected_deck;
   hide_element('options');
 
