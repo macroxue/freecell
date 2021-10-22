@@ -13,6 +13,11 @@ function initialize() {
   create_picture_decks();
   show_element('options');
 
+  card_destinations = new Array(52);
+  for (var i = 0; i < card_destinations.length; ++i) {
+    card_destinations[i] = [];
+  }
+
   var new_auto_play = get_cookie('auto_play');
   if (['max', 'safe', 'none'].includes(new_auto_play)) {
     selected_auto_play = new_auto_play;
@@ -78,10 +83,6 @@ function deal_hand(deal_num) {
   tableaus = new Array(8);
   for (var i = 0; i < tableaus.length; ++i) {
     tableaus[i] = [];
-  }
-  card_destinations = new Array(52);
-  for (var i = 0; i < card_destinations.length; ++i) {
-    card_destinations[i] = [];
   }
 
   // Shuffle the deck.
