@@ -4,7 +4,7 @@ var current_move = -1, move_codes = [], snapshots = [];
 var card_destinations = [];
 var selected_auto_play = 'max';
 var elapse = 0, show_elapse = false;
-var solutions = {};
+var solutions = {}, solved = false;
 
 function initialize() {
   Array.prototype.last = function() { return this[this.length - 1]; }
@@ -99,9 +99,9 @@ function deal_hand(deal_num) {
   current_move = -1;
   move_codes = [];
   snapshots = [];
-  auto_play();
-
   elapse = 0;
+  solved = false;
+  auto_play();
 }
 
 function redraw() {
@@ -304,7 +304,8 @@ function get_field_type(id) {
 }
 
 function check_for_completion() {
-  if (sum_foundation_cards() == 52) {
+  if (sum_foundation_cards() == 52 && !solved) {
+    solved = true;
     var messages = [
       'Amazing!', 'Awesome!', 'Beautiful!', 'Bravo!', 'Brilliant!',
       'Cheers!', 'Congratulations!', 'Cool!', 'Excellent!', 'Fantastic!',
