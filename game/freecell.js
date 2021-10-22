@@ -305,6 +305,14 @@ function get_field_type(id) {
 
 function check_for_completion() {
   if (sum_foundation_cards() == 52) {
+    var messages = [
+      'Amazing!', 'Awesome!', 'Beautiful!', 'Bravo!', 'Brilliant!',
+      'Cheers!', 'Congratulations!', 'Cool!', 'Excellent!', 'Fantastic!',
+      'Great job!', 'Hooray!', 'Impressive!', 'Incredible!', 'Magnificent!',
+      'Marvelous!', 'Nice going!', 'Outstanding!', 'Remarkable!', 'Superb!',
+      'Terrific!', 'Way to go!', 'Well done!', 'Wonderful!', 'You did it!',
+    ];
+    set_element('done', messages[Math.floor(Math.random() * messages.length)]);
     show_element('done');
     setTimeout(() => hide_element('done'), 5000);
   }
