@@ -455,7 +455,11 @@ function try_move_tableau_card(column, row) {
       }
       return b.min_unsorted - a.min_unsorted;
     });
-    return try_tableau_to_tableau(column, targets[0].column);
+    // Prefer reserve to tableua if only one card can be moved and it's not a king.
+    if (tableaus[targets[0].column].length > 0 || targets[0].count > 1 ||
+        rank(tableaus[column].last()) == king || !can_push_to_reserve()) {
+      return try_tableau_to_tableau(column, targets[0].column);
+    }
   }
 
   // Tableau to reserve.
