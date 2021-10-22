@@ -1,6 +1,7 @@
 var reserves = [], foundations = [], tableaus = [];
 var reserve_signs = 'abcd', tableau_signs = '12345678';
-var current_move = -1, move_code = [], snapshots = [];
+var current_move = -1, move_codes = [], snapshots = [];
+var card_destinations = [];
 var selected_auto_play = 'max';
 var elapse = 0, show_elapse = false;
 var solutions = {};
@@ -63,14 +64,18 @@ function deal_hand(deal_num) {
   document.getElementById('deal_num').value = deal_num;
 
   // Initialize the table.
-  reserves = new Array;
+  reserves = [];
   foundations = new Array(4);
   for (var i = 0; i < foundations.length; ++i) {
-    foundations[i] = new Array;
+    foundations[i] = [];
   }
   tableaus = new Array(8);
   for (var i = 0; i < tableaus.length; ++i) {
-    tableaus[i] = new Array;
+    tableaus[i] = [];
+  }
+  card_destinations = new Array(52);
+  for (var i = 0; i < card_destinations.length; ++i) {
+    card_destinations[i] = [];
   }
 
   // Shuffle the deck.
@@ -92,7 +97,7 @@ function deal_hand(deal_num) {
   }
 
   current_move = -1;
-  move_code = [];
+  move_codes = [];
   snapshots = [];
   auto_play();
 
@@ -144,9 +149,7 @@ function redo() {
   if (current_move == snapshots.length - 1) {
     return;
   }
-  ++current_move;
-  set_element('moves', current_move);
-  restore(snapshots[current_move]);
+  play_coded_move(snapshots[current_move + 1].move_codes[0]);
 }
 
 function redo_all() {
@@ -186,50 +189,56 @@ function play_solution(deal_num, solution) {
   show_element('options');
   deal_hand(deal_num);
   for (var i = 0; i < solution.length; i += 2) {
-    var from = solution[i], to = solution[i + 1];
-    var index = reserve_signs.indexOf(from);
-    if (index >= 0) {
-      if (to == 'h') {
-        try_reserve_to_foundation(index);
-        continue;
-      }
-      var column = tableau_signs.indexOf(to);
-      if (column >= 0) {
-        try_reserve_to_tableau(index, column);
-        continue;
-      }
-      continue;
-    }
-    var column = tableau_signs.indexOf(from);
-    if (column >= 0) {
-      if (to == 'h') {
-        try_tableau_to_foundation(column);
-        continue;
-      }
-      if (to == 'r') {
-        try_tableau_to_reserve(column);
-        continue;
-      }
-      var new_column = tableau_signs.indexOf(to);
-      if (new_column >= 0) {
-        try_tableau_to_tableau(column, new_column);
-        continue;
-      }
-      continue;
-    }
+    play_coded_move(solution.slice(i, i+2));
   }
 }
 
-function set_card(card_id, left, top, z_index = 0) {
+function play_coded_move(move_code) {
+  var from = move_code[0], to = move_code[1];
+  var index = reserve_signs.indexOf(from);
+  if (index >= 0) {
+    if (to == 'h') {
+      return try_reserve_to_foundation(index);
+    }
+    var column = tableau_signs.indexOf(to);
+    if (column >= 0) {
+      return try_reserve_to_tableau(index, column);
+    }
+    return;
+  }
+  var column = tableau_signs.indexOf(from);
+  if (column >= 0) {
+    if (to == 'h') {
+      return try_tableau_to_foundation(column);
+    }
+    if (to == 'r') {
+      return try_tableau_to_reserve(column);
+    }
+    var new_column = tableau_signs.indexOf(to);
+    if (new_column >= 0) {
+      return try_tableau_to_tableau(column, new_column);
+    }
+    return;
+  }
+}
+
+function set_card(card, left, top, z_index = 0) {
+  card_destinations[card].push({left:left, top:top, z_index:z_index});
+  if (card_destinations[card].length == 1) {
+    start_animation(get_card_id(card), left, top, z_index);
+  }
+}
+
+function start_animation(card_id, left, top, z_index) {
   var card_element = document.getElementById(card_id);
   var old_left = parseInt(card_element.style.left);
   var old_top = parseInt(card_element.style.top);
-  var num_steps = 10;
-  if (Math.abs(left - old_left) < 10 && Math.abs(top - old_top) < 10) {
-    num_steps = 1;
+  var num_steps = 15, step_left = 0, step_top = 0;
+  while (num_steps > 1 && Math.abs(step_left) < 20 && Math.abs(step_top) < 20) {
+    --num_steps;
+    step_left = (left - old_left) / num_steps;
+    step_top = (top - old_top) / num_steps;
   }
-  var step_left = (left - old_left) / num_steps;
-  var step_top = (top - old_top) / num_steps;
   card_element.style.display = 'block';
   card_element.style.zIndex = z_index | 0x100;
   card_element.onclick = () => {};
@@ -247,10 +256,16 @@ function animate_move(card_element, left, top, num_steps, step_left, step_top) {
     setTimeout(() => animate_move(card_element, left, top,
                                   num_steps, step_left, step_top), 10);
   } else {
+    var card = get_card(card_element.id);
     card_element.style.zIndex &= 0xFF;
-    card_element.onclick = () => move_card(get_card(card_element.id));
+    card_element.onclick = () => move_card(card);
     card_element.ondragover = (event) => accept_drop(event);
     card_element.setAttribute('draggable', true);
+    card_destinations[card].shift();
+    if (card_destinations[card].length >= 1) {
+      var d = card_destinations[card][0];
+      start_animation(get_card_id(card), d.left, d.top, d.z_index);
+    }
   }
 }
 
@@ -372,13 +387,13 @@ function try_move_reserve_card(index) {
   return false;
 }
 
-function try_reserve_to_foundation(index, auto = true) {
+function try_reserve_to_foundation(index, is_auto_play = false) {
   var card = reserves[index];
   if (can_push_to_foundation(card)) {
     remove_from_reserve(index);
-    push_to_foundation(card);
-    move_code.push(reserve_signs[index] + 'h');
-    if (auto) {
+    push_to_foundation(card, is_auto_play);
+    move_codes.push(reserve_signs[index] + 'h');
+    if (!is_auto_play) {
       auto_play();
     }
     return true;
@@ -391,7 +406,7 @@ function try_reserve_to_tableau(index, column) {
   if (can_push_to_tableau(card, column)) {
     remove_from_reserve(index);
     push_to_tableau(card, column);
-    move_code.push(reserve_signs[index] + tableau_signs[column]);
+    move_codes.push(reserve_signs[index] + tableau_signs[column]);
     auto_play();
     return true;
   }
@@ -426,13 +441,13 @@ function try_move_tableau_card(column, row) {
   return try_tableau_to_reserve(column);
 }
 
-function try_tableau_to_foundation(column, auto = true) {
+function try_tableau_to_foundation(column, is_auto_play = false) {
   var card = tableaus[column].last();
   if (can_push_to_foundation(card)) {
     tableaus[column].pop();
-    push_to_foundation(card);
-    move_code.push(tableau_signs[column] + 'h');
-    if (auto) {
+    push_to_foundation(card, is_auto_play);
+    move_codes.push(tableau_signs[column] + 'h');
+    if (!is_auto_play) {
       auto_play();
     }
     return true;
@@ -445,7 +460,7 @@ function try_tableau_to_reserve(column) {
   if (can_push_to_reserve()) {
     tableaus[column].pop();
     push_to_reserve(card);
-    move_code.push(tableau_signs[column] + 'r');
+    move_codes.push(tableau_signs[column] + 'r');
     auto_play();
     return true;
   }
@@ -456,7 +471,7 @@ function try_tableau_to_tableau(origin_column, target_column) {
   var num_movables = can_move_tableau_to_tableau(origin_column, target_column);
   if (num_movables > 0) {
     move_tableau_to_tableau(origin_column, target_column, num_movables);
-    move_code.push(tableau_signs[origin_column] + tableau_signs[target_column]);
+    move_codes.push(tableau_signs[origin_column] + tableau_signs[target_column]);
     auto_play();
     return true;
   }
@@ -489,13 +504,13 @@ function auto_play() {
   while (played) {
     played = false;
     for (var index = reserves.length - 1; index >= 0; --index) {
-      if (is_safe_auto_play(reserves[index]) && try_reserve_to_foundation(index, false)) {
+      if (is_safe_auto_play(reserves[index]) && try_reserve_to_foundation(index, true)) {
         played = true;
       }
     }
     for (var column = 0; column < tableaus.length; ++column) {
       if (tableaus[column].length > 0 && is_safe_auto_play(tableaus[column].last()) &&
-          try_tableau_to_foundation(column, false)) {
+          try_tableau_to_foundation(column, true)) {
         played = true;
       }
     }
@@ -503,13 +518,16 @@ function auto_play() {
 
   ++current_move;
   set_element('moves', current_move);
-
-  if (current_move < snapshots.length) {
+  // Truncate the snapshots after a new move.
+  if (current_move < snapshots.length &&
+      move_codes[0] != snapshots[current_move].move_codes[0]) {
     snapshots = snapshots.slice(0, current_move);
   }
-  snapshots.push({reserves:[...reserves], foundations:copy_2d(foundations),
-                 tableaus:copy_2d(tableaus), move_code:move_code});
-  move_code = [];
+  if (current_move == snapshots.length) {
+    snapshots.push({reserves:[...reserves], foundations:copy_2d(foundations),
+                   tableaus:copy_2d(tableaus), move_codes:move_codes});
+  }
+  move_codes = [];
 }
 
 function sum_foundation_cards() {
@@ -532,11 +550,16 @@ function can_push_to_foundation(card) {
   return foundations[suit(card)].length == rank(card);
 }
 
-function push_to_foundation(card) {
+function push_to_foundation(card, is_auto_play = false) {
   foundations[suit(card)].push(card);
   var id = 'f' + (suit(card)).toString();
   var rect = get_element_position(id);
-  set_card(get_card_id(card), rect.left, rect.top, suit(card) * 13 + rank(card));
+  var z_index = suit(card) * 13 + rank(card);
+  if (is_auto_play) {
+    setTimeout(() => set_card(card, rect.left, rect.top, z_index), 300);
+  } else {
+    set_card(card, rect.left, rect.top, z_index);
+  }
 }
 
 function can_push_to_reserve() {
@@ -547,7 +570,7 @@ function push_to_reserve(card) {
   reserves.push(card);
   var id = 'r' + (reserves.length - 1).toString();
   var rect = get_element_position(id);
-  set_card(get_card_id(card), rect.left, rect.top, reserves.length - 1);
+  set_card(card, rect.left, rect.top, reserves.length - 1);
 }
 
 function remove_from_reserve(index) {
@@ -555,7 +578,7 @@ function remove_from_reserve(index) {
     reserves[i] = reserves[i + 1];
     var id = 'r' + i.toString();
     var rect = get_element_position(id);
-    set_card(get_card_id(reserves[i]), rect.left, rect.top, i);
+    set_card(reserves[i], rect.left, rect.top, i);
   }
   reserves.pop();
 }
@@ -573,8 +596,7 @@ function push_to_tableau(card, target) {
   var row = tableaus[target].length - 1;
   var id = 't' + target.toString();
   var rect = get_element_position(id);
-  set_card(get_card_id(card), rect.left, rect.top + row * rect.height / 4.25,
-           row + target * 8);
+  set_card(card, rect.left, rect.top + row * rect.height / 4.25, row + target * 8);
 }
 
 function can_move_tableau_to_tableau(origin, target) {
