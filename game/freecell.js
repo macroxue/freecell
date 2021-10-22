@@ -4,7 +4,7 @@ var current_move = -1, move_codes = [], snapshots = [];
 var card_destinations = [];
 var selected_auto_play = 'max';
 var elapse = 0, show_elapse = false;
-var solutions = {}, solved = false;
+var solutions = {}, solved = false, wins = 0;
 
 function initialize() {
   Array.prototype.last = function() { return this[this.length - 1]; }
@@ -24,6 +24,12 @@ function initialize() {
     selected_deck = new_deck;
   }
   document.getElementById('select_deck').value = selected_deck;
+
+  var new_wins = parseInt(get_cookie('wins'));
+  if (0 <= wins && wins <= 1000 * 1000) {
+    wins = new_wins;
+  }
+  set_element('wins', wins.toString());
 
   const url_params = new URLSearchParams(window.location.search);
   if (url_params.get('deal') != null) {
@@ -191,6 +197,7 @@ function play_solution(deal_num, solution) {
   for (var i = 0; i < solution.length; i += 2) {
     play_coded_move(solution.slice(i, i+2));
   }
+  solved = true;
 }
 
 function play_coded_move(move_code) {
@@ -306,6 +313,10 @@ function get_field_type(id) {
 function check_for_completion() {
   if (sum_foundation_cards() == 52 && !solved) {
     solved = true;
+    ++wins;
+    set_element('wins', wins.toString());
+    set_cookie('wins', wins.toString());
+
     var messages = [
       'Amazing!', 'Awesome!', 'Beautiful!', 'Bravo!', 'Brilliant!',
       'Cheers!', 'Congratulations!', 'Cool!', 'Excellent!', 'Fantastic!',
