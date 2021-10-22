@@ -154,7 +154,28 @@ div.message {
   position: absolute;
   text-align: center;
   text-shadow: 3px 3px 2px grey;
-  width: 90%;
-  z-index: 101;
+  width: 100%;
+  z-index: 1001;
 }
-
+div.help {
+  background: darkgreen;
+  color: aqua;
+  font-family: DejaVu;
+  font-size: 22px;
+  right: 20px;
+  bottom: 20px;
+  opacity: 0.9;
+  position: absolute;
+  z-index: 1001;
+}
+div#help_sign {
+  text-shadow: 3px 3px 2px black;
+  display: inline;
+}
+div#help_message {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+  display: none;
+}
+div#help_message ul {
+  margin-right: 30px;
+}

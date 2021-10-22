@@ -73,8 +73,21 @@
       </tr>
     </table>
 
-    <div class='message' id='message' onclick='hide_element("message")'>
-      Well done!
+    <div class='message' id='done' onclick='hide_element("done")'>Well done!</div>
+
+    <div class='help' id='help_sign' onclick='show_help()'>?</div>
+    <div class='help' id='help_message' onclick='hide_help()'>
+      <ul>
+        <li>Tap on a card or a column to let the game figure out the best move.</li>
+        <li>Drag and drop to specify the exact move.</br>
+          (Or drag a card to peek at it.)</li>
+        <li>Speed up the play with supermoves and auto drops to home.</li>
+        <li>Tap on the "Free Cell" logo to show/hide the menu bar.</li>
+        <li>Undo/redo the moves to explore alternatives.</li>
+        <li>Tap on the "Time" label to show/hide time.</li>
+        <li>Tap on the "#" sign to get a solution for any game between 1 and 221,000.</br>
+          (Except that 11982, 146692 and 186216 are unsolvable.)</li>
+      </ul>
     </div>
   </body>
 </html>

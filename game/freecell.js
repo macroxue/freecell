@@ -290,8 +290,8 @@ function get_field_type(id) {
 
 function check_for_completion() {
   if (sum_foundation_cards() == 52) {
-    show_element('message');
-    setTimeout(() => hide_element('message'), 5000);
+    show_element('done');
+    setTimeout(() => hide_element('done'), 5000);
   }
 }
 
@@ -573,7 +573,7 @@ function push_to_tableau(card, target) {
   var row = tableaus[target].length - 1;
   var id = 't' + target.toString();
   var rect = get_element_position(id);
-  set_card(get_card_id(card), rect.left, rect.top + row * rect.height / 4,
+  set_card(get_card_id(card), rect.left, rect.top + row * rect.height / 4.25,
            row + target * 8);
 }
 
@@ -739,4 +739,14 @@ function get_cookie(key) {
     }
   }
   return '';
+}
+
+function show_help() {
+  hide_element('help_sign');
+  show_element('help_message');
+}
+
+function hide_help() {
+  hide_element('help_message');
+  show_element('help_sign');
 }
