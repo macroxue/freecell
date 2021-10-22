@@ -26,7 +26,7 @@ function initialize() {
   document.getElementById('select_deck').value = selected_deck;
 
   var new_wins = parseInt(get_cookie('wins'));
-  if (0 <= wins && wins <= 1000 * 1000) {
+  if (0 <= new_wins && new_wins <= 1000 * 1000) {
     wins = new_wins;
   }
   set_element('wins', wins.toString());
