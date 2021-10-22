@@ -11,7 +11,7 @@ function initialize() {
 
   create_clean_deck();
   create_picture_decks();
-  hide_element('options');
+  show_element('options');
 
   var new_auto_play = get_cookie('auto_play');
   if (['max', 'safe', 'none'].includes(new_auto_play)) {
