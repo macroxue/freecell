@@ -42,6 +42,29 @@ function get_card(card_id) {
   return (parseInt(card_id) % 13 << 2) + Math.floor(parseInt(card_id) / 13);
 }
 
+function shuffle_deck(deal_num) {
+  var deck = [...Array(52).keys()];
+  var seed = deal_num;
+  for (var i = 0; i < deck.length; ++i) {
+    var cards_left = deck.length - i;
+    seed = (seed * 214013 + 2531011) & 0xffffffff;
+    var rand = (seed >> 16) & 0x7fff;
+    var rect = deal_num < 0x80000000 ? rand % cards_left : (rand | 0x8000) % cards_left;
+    [deck[rect], deck[cards_left - 1]] = [deck[cards_left - 1], deck[rect]];
+  }
+  return deck.reverse();
+}
+
+function read_deck(cards) {
+  var deck = [];
+  for (var i = 0; i < cards.length; i += 2) {
+    var rank = 'A23456789TJQK'.indexOf(cards[i]);
+    var suit = 'SHDC'.indexOf(cards[i + 1]);
+    deck.push((rank << 2) + suit);
+  }
+  return deck;
+}
+
 function create_clean_deck() {
   var rect = get_element_position('logo');
   for (var card = 0; card < 52; ++card) {

@@ -85,19 +85,8 @@ function deal_hand(deal_num) {
     tableaus[i] = [];
   }
 
-  // Shuffle the deck.
-  var deck = [...Array(52).keys()];
-  var seed = deal_num;
-  for (var i = 0; i < deck.length; ++i) {
-    var cards_left = deck.length - i;
-    seed = (seed * 214013 + 2531011) & 0xffffffff;
-    var rand = (seed >> 16) & 0x7fff;
-    var rect = deal_num < 0x80000000 ? rand % cards_left : (rand | 0x8000) % cards_left;
-    [deck[rect], deck[cards_left - 1]] = [deck[cards_left - 1], deck[rect]];
-  }
-  deck.reverse();
-
-  // Put cards on tableaus.
+  // Shuffle the cards and put them on tableaus.
+  var deck = shuffle_deck(deal_num);
   var rect = get_element_position('logo');
   for (var i = 0; i < deck.length; ++i) {
     push_to_tableau(deck[i], i % 8);
