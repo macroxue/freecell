@@ -3,6 +3,7 @@ var reserve_signs = 'abcd', tableau_signs = '12345678';
 var current_move = -1, move_codes = [], snapshots = [];
 var card_destinations = [];
 var selected_auto_play = 'max';
+var replay = false;
 var elapse = 0, show_elapse = false;
 var solutions = {}, solved = false, wins = 0;
 
@@ -57,6 +58,13 @@ function initialize() {
                   get_parent_card_id(event.target));
   });
   setTimeout(() => update_elapse(), 1000);
+
+  if (url_params.get('replay') != null) {
+    show_element('replay', 'inline');
+    setTimeout(() => check_replay(), 1000);
+  } else {
+    hide_element('replay');
+  }
 }
 
 function set_deal() {
@@ -155,6 +163,17 @@ function redo_all() {
   current_move = snapshots.length - 1;
   set_element('moves', current_move);
   restore(snapshots[current_move]);
+}
+
+function toggle_replay() {
+  replay = !replay;
+}
+
+function check_replay() {
+  if (replay) {
+    redo();
+  }
+  setTimeout(() => check_replay(), 1000);
 }
 
 function get_solution() {
@@ -717,8 +736,8 @@ function set_element(id, value) {
   document.getElementById(id).innerHTML = value;
 }
 
-function show_element(id) {
-  document.getElementById(id).style.display = 'block';
+function show_element(id, display = 'block') {
+  document.getElementById(id).style.display = display;
 }
 
 function hide_element(id) {
