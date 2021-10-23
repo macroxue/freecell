@@ -42,6 +42,8 @@ function initialize() {
     var deal = url_params.get('deal').split(':');
     if (deal.length <= 1) {
       deal_hand(parseInt(deal[0]));
+    } else if (deal[0].length == 52 * 2) {
+      play_solution(0, deal[1], deal[0]);
     } else {
       play_solution(parseInt(deal[0]), deal[1]);
     }
@@ -79,7 +81,7 @@ function next_deal() {
   deal_hand(parseInt(document.getElementById('deal_num').value) + 1);
 }
 
-function deal_hand(deal_num) {
+function deal_hand(deal_num, cards = '') {
   document.getElementById('deal_num').value = deal_num;
 
   // Initialize the table.
@@ -94,7 +96,7 @@ function deal_hand(deal_num) {
   }
 
   // Shuffle the cards and put them on tableaus.
-  var deck = shuffle_deck(deal_num);
+  var deck = cards.length == 52 * 2 ? read_deck(cards) : shuffle_deck(deal_num);
   var rect = get_element_position('logo');
   for (var i = 0; i < deck.length; ++i) {
     push_to_tableau(deck[i], i % 8);
@@ -196,13 +198,13 @@ function get_solution() {
   });
 }
 
-function play_solution(deal_num, solution) {
+function play_solution(deal_num, solution, cards = '') {
   var foundation_moves = (solution.match(/h/g) || []).length;
   selected_auto_play = foundation_moves == 0 ? 'max' :
     foundation_moves < 52 ? 'safe' : 'none';
   document.getElementById('select_auto_play').value = selected_auto_play;
   show_element('options');
-  deal_hand(deal_num);
+  deal_hand(deal_num, cards);
   for (var i = 0; i < solution.length; i += 2) {
     play_coded_move(solution.slice(i, i+2));
   }
