@@ -131,8 +131,7 @@ function restore(snapshot) {
       push_to_tableau(card, i);
     }
   }
-  selected_auto_play = snapshot.selected_auto_play;
-  document.getElementById('select_auto_play').value = selected_auto_play;
+  set_auto_play(snapshot.selected_auto_play);
 }
 
 function undo() {
@@ -157,8 +156,7 @@ function redo() {
   if (current_move == snapshots.length - 1) {
     return;
   }
-  selected_auto_play = snapshots[current_move + 1].selected_auto_play;
-  document.getElementById('select_auto_play').value = selected_auto_play;
+  set_auto_play(snapshots[current_move + 1].selected_auto_play);
   play_coded_move(snapshots[current_move + 1].move_codes[0]);
 }
 
@@ -517,6 +515,11 @@ function try_tableau_to_tableau(origin_column, target_column) {
   return false;
 }
 
+function set_auto_play(auto) {
+  selected_auto_play = auto;
+  document.getElementById('select_auto_play').value = auto;
+}
+
 function select_auto_play() {
   selected_auto_play = document.getElementById('select_auto_play').value;
   set_cookie('auto_play', selected_auto_play);
@@ -559,8 +562,8 @@ function auto_play() {
   set_element('moves', current_move);
   // Truncate the snapshots after a new move.
   if (current_move < snapshots.length &&
-      move_codes[0] != snapshots[current_move].move_codes[0]) {
-        //selected_auto_play != snapshots[current_move].selected_auto_play)) {
+      (move_codes[0] != snapshots[current_move].move_codes[0] ||
+        selected_auto_play != snapshots[current_move].selected_auto_play)) {
     snapshots = snapshots.slice(0, current_move);
   }
   if (current_move == snapshots.length) {
