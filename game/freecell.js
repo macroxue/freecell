@@ -131,6 +131,8 @@ function restore(snapshot) {
       push_to_tableau(card, i);
     }
   }
+  selected_auto_play = snapshot.selected_auto_play;
+  document.getElementById('select_auto_play').value = selected_auto_play;
 }
 
 function undo() {
@@ -155,6 +157,8 @@ function redo() {
   if (current_move == snapshots.length - 1) {
     return;
   }
+  selected_auto_play = snapshots[current_move + 1].selected_auto_play;
+  document.getElementById('select_auto_play').value = selected_auto_play;
   play_coded_move(snapshots[current_move + 1].move_codes[0]);
 }
 
@@ -180,7 +184,7 @@ function check_replay() {
 
 function get_solution() {
   var deal_num = document.getElementById('deal_num').value;
-  if (deal_num <= 0 || deal_num > 221000) {
+  if (deal_num <= 0 || deal_num > 401000) {
     return;
   }
   if (solutions[deal_num]) {
@@ -556,11 +560,13 @@ function auto_play() {
   // Truncate the snapshots after a new move.
   if (current_move < snapshots.length &&
       move_codes[0] != snapshots[current_move].move_codes[0]) {
+        //selected_auto_play != snapshots[current_move].selected_auto_play)) {
     snapshots = snapshots.slice(0, current_move);
   }
   if (current_move == snapshots.length) {
     snapshots.push({reserves:[...reserves], foundations:copy_2d(foundations),
-                   tableaus:copy_2d(tableaus), move_codes:move_codes});
+                   tableaus:copy_2d(tableaus), move_codes:move_codes,
+                   selected_auto_play:selected_auto_play});
   }
   move_codes = [];
 }
