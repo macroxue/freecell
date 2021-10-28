@@ -160,6 +160,7 @@ div.message {
   font-style: italic;
   font-weight: bold;
   left: 0;
+  opacity: 0.8;
   position: absolute;
   text-align: center;
   text-shadow: 3px 3px 2px grey;

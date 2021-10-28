@@ -81,6 +81,7 @@ function next_deal() {
 }
 
 function deal_hand(deal_num, cards = '') {
+  hide_element('done');
   document.getElementById('deal_num').value = deal_num;
 
   // Initialize the table.
@@ -338,7 +339,6 @@ function check_for_completion() {
     ];
     set_element('done', messages[Math.floor(Math.random() * messages.length)]);
     show_element('done');
-    setTimeout(() => hide_element('done'), 5000);
   }
 }
 
