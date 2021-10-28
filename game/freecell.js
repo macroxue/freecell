@@ -38,6 +38,12 @@ function initialize() {
   set_element('wins', wins.toString());
 
   const url_params = new URLSearchParams(window.location.search);
+  if (url_params.get('replay') != null) {
+    show_element('replay', 'inline');
+    setTimeout(() => check_replay(), 1000);
+  } else {
+    hide_element('replay');
+  }
   if (url_params.get('deal') != null) {
     var deal = url_params.get('deal').split(':');
     if (deal.length <= 1) {
@@ -60,13 +66,6 @@ function initialize() {
                   get_parent_card_id(event.target));
   });
   setTimeout(() => update_elapse(), 1000);
-
-  if (url_params.get('replay') != null) {
-    show_element('replay', 'inline');
-    setTimeout(() => check_replay(), 1000);
-  } else {
-    hide_element('replay');
-  }
 }
 
 function set_deal() {

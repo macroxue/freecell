@@ -13,6 +13,17 @@ body {
   font-family: DejaVu;
 }
 
+/* Hide scrollbar but allow scrolling */
+body {
+  -ms-overflow-style: none; /* for Internet Explorer, Edge */
+  scrollbar-width: none;    /* for Firefox */
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+body::-webkit-scrollbar {
+  display: none; /* for Chrome, Safari, and Opera */
+}
+
 /* Styles for the game table */
 table.table, table.reserve, table.tableau {
   border-spacing: 5px;
@@ -103,8 +114,7 @@ div.suit {
 /* Styles for the options dialog */
 div.options {
   background: darkgreen;
-  display: none;
-  font-size: 24px;
+  font-size: 22px;
   left: 0;
   top: 0;
   margin: auto;
@@ -118,7 +128,7 @@ label {
   color: skyblue;
 }
 label.control {
-  font-size: 120%;
+  font-size: 130%;
 }
 label#moves {
   color: yellow;
@@ -129,16 +139,15 @@ label#elapse {
   display: inline-block;
   width: 72px;
 }
-button, input, select {
+input, select {
   appearance: none;
   background: darkgreen;
   border: 0px;
   color: yellow;
   font-family: DejaVu;
-  font-size: 20px;
-  /*padding: 5px 5px;*/
+  font-size: 22px;
 }
-button:hover, input:hover, select:hover {
+input:hover, select:hover {
   background: green;
 }
 
