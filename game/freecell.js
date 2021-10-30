@@ -182,7 +182,7 @@ function check_replay() {
 
 function get_solution() {
   var deal_num = document.getElementById('deal_num').value;
-  if (deal_num <= 0 || deal_num > 401000) {
+  if (deal_num <= 0 || deal_num > 720000) {
     return;
   }
   if (solutions[deal_num]) {
