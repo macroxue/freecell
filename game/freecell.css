@@ -128,12 +128,16 @@ label {
   color: skyblue;
 }
 label.control {
+  font-family: "Noto Color Emoji";
   font-size: 130%;
 }
 label#moves {
   color: yellow;
   display: inline-block;
   width: 36px;
+}
+label#replay {
+  display: none;
 }
 label#elapse {
   display: inline-block;
@@ -171,7 +175,8 @@ div.help {
   background: darkgreen;
   color: aqua;
   font-family: DejaVu;
-  font-size: 22px;
+  font-size: 20px;
+  margin-left: 20px;
   right: 20px;
   bottom: 20px;
   opacity: 0.9;
