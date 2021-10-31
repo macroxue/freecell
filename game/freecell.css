@@ -172,28 +172,31 @@ div.message {
   z-index: 1001;
 }
 div.help {
-  background: darkgreen;
-  color: aqua;
   font-family: DejaVu;
   font-size: 20px;
   margin-left: 20px;
   right: 20px;
   bottom: 20px;
-  opacity: 0.9;
+  opacity: 1.0;
   position: absolute;
   z-index: 1001;
 }
 div#help_sign {
-  text-shadow: 3px 3px 2px black;
+  background: darkgreen;
+  color: aqua;
   display: inline;
+  text-shadow: 3px 3px 2px black;
 }
 div#help_message {
+  background: white;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+  color: black;
   display: none;
+  text-shadow: 1px 2px 5px grey;
 }
 div#help_message ul {
   margin-right: 30px;
 }
 li.info {
-  color: yellow;
+  color: darkorange;
 }
