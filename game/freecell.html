@@ -51,8 +51,9 @@
         <td class='nocard' id='r1' ondragover='accept_drop(event)'>&nbsp;</td>
         <td class='nocard' id='r2' ondragover='accept_drop(event)'>&nbsp;</td>
         <td class='nocard' id='r3' ondragover='accept_drop(event)'>&nbsp;</td>
-        <td class='logo' id='logo' onclick='toggle_element("options")'>
-          &nbsp;Free&nbsp;<br/>&nbsp;Cell&nbsp;
+        <td>
+          <div class='logo' id='logo' onclick='toggle_element("options")'>Free<br>Cell</div>
+          <div class='wins'><b id='wins'>0</b>⭐</div>
         </td>
         <td class='nocard' id='f0' ondragover='accept_drop(event)'><font color='black'>&spades;</font></td>
         <td class='nocard' id='f1' ondragover='accept_drop(event)'><font color='darkred'>&hearts;</font></td>
@@ -76,7 +77,7 @@
 
     <div class='message' id='done' onclick='hide_element("done")'>Well done!</div>
 
-    <div class='help' id='help_sign' onclick='show_help()'>?!</div>
+    <div class='help' id='help_sign' onclick='show_help()'>?</div>
     <div class='help' id='help_message' onclick='hide_help()'>
       <img src='menu-bar.png' width='100%'>
       <ul>
@@ -87,7 +88,6 @@
           <a href='https://github.com/macroxue/freecell' target='_blank'>
             https://github.com/macroxue/freecell</a>.
         </li>
-        <li class='info'><b id='wins'>0</b> wins so far.</li>
       </ul>
     </div>
   </body>

@@ -29,11 +29,18 @@ table.table, table.reserve, table.tableau {
   border-spacing: 5px;
   margin: auto;
 }
-td.logo {
+div.logo {
   color: aqua;
   font-size: 24px;
+  margin: 10px;
   text-align: center;
   text-shadow: 3px 3px 2px black;
+}
+div.wins {
+  color: yellow;
+  font-size: 16px;
+  text-align: center;
+  text-shadow: 2px 2px 2px black;
 }
 div.card {
   display: none;
