@@ -793,7 +793,7 @@ function make_readable(elapse) {
   return minutes.toString() + ':' + ('0' + seconds.toString()).slice(-2);
 }
 
-function set_cookie(key, value, expiration_days = 30) {
+function set_cookie(key, value, expiration_days = 365) {
   var date = new Date();
   date.setTime(date.getTime() + (expiration_days * 86400 * 1000));
   document.cookie = key + '=' + value + ';expires=' + date.toUTCString() +
