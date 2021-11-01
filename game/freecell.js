@@ -1,4 +1,4 @@
-var reserves = [], foundations = [], tableaus = [];
+var reserves = [], unpacked_reserves = [], foundations = [], tableaus = [];
 var reserve_signs = 'abcd', tableau_signs = '12345678';
 var current_move = -1, move_codes = [], snapshots = [];
 var card_destinations = [];
@@ -86,6 +86,7 @@ function deal_hand(deal_num, cards = '') {
 
   // Initialize the table.
   reserves = [];
+  unpacked_reserves = [-1, -1, -1, -1];
   foundations = new Array(4);
   for (var i = 0; i < foundations.length; ++i) {
     foundations[i] = [];
@@ -115,9 +116,13 @@ function redraw() {
 }
 
 function restore(snapshot) {
-  reserves = [];
-  for (var card of snapshot.reserves) {
-    push_to_reserve(card);
+  reserves = [...snapshot.reserves];
+  unpacked_reserves = [...snapshot.unpacked_reserves];
+  for (var card of reserves) {
+    var unpacked_index = unpacked_reserves.indexOf(card);
+    var id = 'r' + unpacked_index.toString();
+    var rect = get_element_position(id);
+    set_card(card, rect.left, rect.top, unpacked_index);
   }
   for (var i = 0; i < foundations.length; ++i) {
     foundations[i] = [];
@@ -566,7 +571,8 @@ function auto_play() {
     snapshots = snapshots.slice(0, current_move);
   }
   if (current_move == snapshots.length) {
-    snapshots.push({reserves:[...reserves], foundations:copy_2d(foundations),
+    snapshots.push({reserves:[...reserves], unpacked_reserves:[...unpacked_reserves],
+                   foundations:copy_2d(foundations),
                    tableaus:copy_2d(tableaus), move_codes:move_codes,
                    selected_auto_play:selected_auto_play});
   }
@@ -611,19 +617,18 @@ function can_push_to_reserve() {
 
 function push_to_reserve(card) {
   reserves.push(card);
-  var id = 'r' + (reserves.length - 1).toString();
+  var unpacked_index = unpacked_reserves.indexOf(-1);
+  unpacked_reserves[unpacked_index] = card;
+  var id = 'r' + unpacked_index.toString();
   var rect = get_element_position(id);
-  set_card(card, rect.left, rect.top, reserves.length - 1);
+  set_card(card, rect.left, rect.top, unpacked_index);
 }
 
 function remove_from_reserve(index) {
-  for (var i = index; i < reserves.length - 1; ++i) {
-    reserves[i] = reserves[i + 1];
-    var id = 'r' + i.toString();
-    var rect = get_element_position(id);
-    set_card(reserves[i], rect.left, rect.top, i);
-  }
-  reserves.pop();
+  var card = reserves[index];
+  reserves.splice(index, 1);
+  var unpacked_index = unpacked_reserves.indexOf(card);
+  unpacked_reserves[unpacked_index] = -1;
 }
 
 function can_push_to_tableau(card, target) {
