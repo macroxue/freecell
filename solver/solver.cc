@@ -14,7 +14,7 @@ using namespace std;
 class Beam {
  public:
   Beam(int seed, int beam_size, int beam_id, int num_beams);
-  void PrefixSearch(const Node& layout, vector<Move> moves);
+  string PrefixSearch(const Node& layout, vector<Move> moves);
   void SubmitWork(List<Node>* new_work);
 
  private:
@@ -215,7 +215,7 @@ Node* Beam::BeamSearch(const Node& layout) {
       if (AllBeamsEmpty(i)) break;
       Barrier();
     }
-    if (beam_id_ == 0) {
+    if (beam_id_ == 0 && !options.quiet) {
       char progress[30];
       sprintf(progress, "%s%4d %8d", string('\b', 13).c_str(), i,
               levels_[i].size());
@@ -250,7 +250,7 @@ Node* Beam::BeamSearch(const Node& layout) {
     });
     level.Clear();
   }
-  if (beam_id_ == 0) {
+  if (beam_id_ == 0 && !options.quiet) {
     printf("%s%8d\n", string('\b', 8).c_str(), max_level_size);
   }
   return solution.release();
@@ -278,16 +278,17 @@ string Beam::EncodeSolution(const Node& start, const Node& finish) const {
   return code;
 }
 
-void Beam::PrefixSearch(const Node& layout, vector<Move> moves) {
+string Beam::PrefixSearch(const Node& layout, vector<Move> moves) {
   upperbound_ = moves.empty() ? kMaxMoves : moves.size();
-  if (beam_id_ == 0) printf("upperbound %d\n", upperbound_);
+  if (beam_id_ == 0 && !options.quiet) printf("upperbound %d\n", upperbound_);
   int start = 0;
   bool solved = false;
+  string coded_solution;
   do {
     ScopedNode prefix(&pool_, pool_.New(layout));
     prefix->PlayMoves({&moves[0], &moves[start]});
 
-    if (beam_id_ == 0) printf("%d              ", start);
+    if (beam_id_ == 0 && !options.quiet) printf("%d              ", start);
     ScopedNode solution(&pool_, BeamSearch(*prefix));
     if (solution) {
       solved = true;
@@ -305,15 +306,31 @@ void Beam::PrefixSearch(const Node& layout, vector<Move> moves) {
       solution->CompleteSolution();
       code += EncodeSolution(*prefix, *solution);
       moves = DecodeSolution(code);
-      if (beam_id_ == 0) {
-        solution->ShowSummary();
-        printf("%d:", seed_);
-        puts(code.c_str());
-      }
+      coded_solution = code;
     }
     start += options.auto_play ? 10 : 20;
   } while (start < moves.size());
-  if (!solved) puts("No solution");
+  if (beam_id_ == 0) printf("%d:%s\n", seed_, coded_solution.c_str());
+  return coded_solution;
+}
+
+extern "C" {
+const char* solve(int seed, int beam_size, int auto_play) {
+  Node::Initialize();
+
+  options.seed = seed;
+  options.beam_size = beam_size;
+  options.auto_play = auto_play == 1;
+  options.max_auto_play = auto_play == 2;
+  options.quiet = true;
+
+  Beam beam(seed, beam_size, 0, 1);
+  Node layout(seed);
+  vector<Move> moves;
+  static string solution;
+  solution = beam.PrefixSearch(layout, moves);
+  return solution.c_str();
+}
 }
 
 int main(int argc, char* argv[]) {
@@ -323,7 +340,7 @@ int main(int argc, char* argv[]) {
 
   Node layout(options.seed);
   if (options.deal > 0) layout.set_cards(GetDeal(options.deal));
-  layout.Show();
+  if (!options.quiet) layout.Show();
 
   string code;
   if (ftell(stdin) != -1) code = ReadSolution(options.seed);

@@ -1,5 +1,6 @@
 #include "node.h"
 
+bool initialized = false;
 Node* Node::pool_;
 Node Node::goal_;
 
@@ -9,6 +10,9 @@ vector<vector<unsigned>> Node::tableau_sorted_rand_;
 vector<vector<unsigned>> Node::tableau_top_rand_;
 
 void Node::Initialize() {
+  if (initialized) return;
+  initialized = true;
+
   InitializeHashRand(kTotalCards, &reserve_rand_);
 
   tableau_unsorted_rand_.resize(8);

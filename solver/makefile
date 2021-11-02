@@ -42,3 +42,10 @@ solver.q: $(SOLVER_SRC)
 
 visualizer: visualizer.cc $(NODE_SRC) deals.cc deals.h
 	g++ -O3 -std=c++0x -o $@ $(filter %.cc,$^)
+
+solver.js: $(SOLVER_SRC)
+	emcc -O3 -std=c++17 -o $@ $(filter %.cc,$^) \
+		-s ALLOW_MEMORY_GROWTH \
+		-s ASSERTIONS=1 \
+		-s EXPORTED_FUNCTIONS='["_solve"]' \
+		-s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]'
