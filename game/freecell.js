@@ -35,7 +35,7 @@ function initialize() {
   if (0 <= new_wins && new_wins <= 1000 * 1000) {
     wins = new_wins;
   }
-  set_element('wins', wins.toString());
+  set_element('wins', wins.toString() + get_star(wins));
 
   const url_params = new URLSearchParams(window.location.search);
   if (url_params.get('replay') != null) {
@@ -354,11 +354,22 @@ function get_field_type(id) {
   }
 }
 
+function get_star(wins) {
+  var stars = ['☆', '⭐', '🌟', '💛', '💖', '💘'];
+  var laddar = [10, 30, 100, 300, 1000, 3000];
+  for (var i in laddar) {
+    if (wins < laddar[i]) {
+      return stars[i]
+    };
+  }
+  return stars.last();
+}
+
 function check_for_completion() {
   if (sum_foundation_cards() == 52 && !solved) {
     solved = true;
     ++wins;
-    set_element('wins', wins.toString());
+    set_element('wins', wins.toString() + get_star(wins));
     set_cookie('wins', wins.toString());
 
     var messages = [
