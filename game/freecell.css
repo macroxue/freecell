@@ -158,6 +158,9 @@ input, select {
   font-family: DejaVu;
   font-size: 22px;
 }
+input {
+  font-size: 20px;
+}
 input:hover, select:hover {
   background: green;
 }
@@ -171,12 +174,17 @@ div.message {
   font-style: italic;
   font-weight: bold;
   left: 0;
-  opacity: 0.8;
+  opacity: 1.0;
   position: absolute;
   text-align: center;
   text-shadow: 3px 3px 2px grey;
   width: 100%;
   z-index: 1001;
+}
+div#alert {
+  background: black;
+  font-size: 60px;
+  text-shadow: 2px 2px 1px grey;
 }
 div.help {
   font-family: DejaVu;

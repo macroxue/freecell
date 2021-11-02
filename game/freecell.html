@@ -6,6 +6,7 @@
     <link rel='stylesheet' href='freecell.css'></link>
     <script src='freecell.js'/></script>
     <script src='deck.js'/></script>
+    <script src='solver.js'/></script>
   </head>
   <body onload='initialize()' onresize='redraw()'>
     <div class='options' id='options'>
@@ -76,6 +77,7 @@
     </table>
 
     <div class='message' id='done' onclick='hide_element("done")'>Well done!</div>
+    <div class='message' id='alert' onclick='hide_element("alert")'></div>
 
     <div class='help' id='help_sign' onclick='show_help()'>?</div>
     <div class='help' id='help_message' onclick='hide_help()'>

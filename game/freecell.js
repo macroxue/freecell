@@ -5,7 +5,7 @@ var card_destinations = [];
 var selected_auto_play = 'max';
 var replay = false;
 var elapse = 0, show_elapse = false;
-var solutions = {}, solved = false, wins = 0;
+var solutions = {}, solved = false, wins = 0, solver_attempts = 0;
 
 function initialize() {
   Array.prototype.last = function() { return this[this.length - 1]; }
@@ -70,14 +70,17 @@ function initialize() {
 
 function set_deal() {
   deal_hand(document.getElementById('deal_num').value);
+  solver_attempts = 0;
 }
 
 function previous_deal() {
   deal_hand(parseInt(document.getElementById('deal_num').value) - 1);
+  solver_attempts = 0;
 }
 
 function next_deal() {
   deal_hand(parseInt(document.getElementById('deal_num').value) + 1);
+  solver_attempts = 0;
 }
 
 function deal_hand(deal_num, cards = '') {
@@ -187,11 +190,28 @@ function check_replay() {
 
 function get_solution() {
   var deal_num = document.getElementById('deal_num').value;
-  if (deal_num <= 0 || deal_num > 1000000) {
+  if (deal_num <= 0 || deal_num > 1000000000) {
     return;
   }
   if (solutions[deal_num]) {
     play_solution(deal_num, solutions[deal_num]);
+    return;
+  }
+  if (deal_num > 1000000) {
+    var auto = selected_auto_play == 'max' ? 2 : selected_auto_play == 'safe' ? 1 : 0;
+    var solution = Module.ccall('solve', // name of C function
+                                'string', // return type
+                                ['number', 'number', 'number'], // argument types
+                                [deal_num, 1024 << solver_attempts, auto]); // arguments
+    if (solution) {
+      solutions[deal_num] = solution;
+      play_solution(deal_num, solution);
+    } else {
+      ++solver_attempts;
+      set_element('alert', 'No solution with attempt ' + solver_attempts.toString());
+      show_element('alert');
+      setTimeout(() => hide_element('alert'), 3000);
+    }
     return;
   }
   var url = 'https://raw.githubusercontent.com/macroxue/freecell/master/solutions/block.'
@@ -201,7 +221,13 @@ function get_solution() {
       var deal = line.split(':');
       solutions[deal[0]] = deal[1];
     }
-    play_solution(deal_num, solutions[deal_num]);
+    if (solutions[deal_num]) {
+      play_solution(deal_num, solutions[deal_num]);
+    } else {
+      set_element('alert', 'No solution');
+      show_element('alert');
+      setTimeout(() => hide_element('alert'), 3000);
+    }
   });
 }
 
