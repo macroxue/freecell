@@ -2,7 +2,7 @@
 
 Click on the image or [here](https://macroxue.github.io/freecell/game/freecell.html) to
 play the popular FreeCell game. It supports Microsoft game numbers and includes solutions
-for games 1 to 1000000. The solutions are near-optimal, averaging 25.5 moves per game.
+for games 1 to 1 million. The solutions are near-optimal, averaging 25.5 moves per game.
 
 [![Screenshot](https://github.com/macroxue/freecell/blob/master/game/screenshot.png)](https://macroxue.github.io/freecell/game/freecell.html)
 
@@ -14,6 +14,20 @@ specify the exact move.
 
 Follow the link [94717719](https://macroxue.github.io/freecell/game/freecell.html?deal=94717719:6r565r52135157785r65b64r7r727874b71267626r64a6761rc71r141312c1723231273r343232b35r856r86b88356858r8184c835651528241r216r263r2341464342a4454r27812r2r2825)
 and use the move controls to see how the difficult game is solved in 76 moves.
+
+The game can also attempt to solve any game between 1 million and 1 billion. It usually
+succeeds at the first attempt in a fraction of a second. If unsuccessful, it doubles
+the effort at each following attempt. Below are the success rates and the time taken on a
+modern desktop or laptop.
+
+| Attempt | Success rate | Time taken | Compared to the optimal |
+|---------|--------------|------------|-------------------------|
+|    1    |    99.6%     | 1/4 second | 2 moves longer          |
+|    2    |    99.8%     | 1/2 second | 1.5 moves longer        |
+|    3    |    99.9%     |   1 second | 1 move longer           |
+
+One extreme example is [1001874](https://macroxue.github.io/freecell/game/freecell.html?deal=1001874)
+which takes 5 attempts to solve.
 
 # FreeCell solver
 
