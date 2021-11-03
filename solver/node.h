@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include <algorithm>
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
@@ -35,6 +36,7 @@ class Pool {
   void Free(Node* node);
 
   Node* head_ = nullptr;
+  vector<unique_ptr<Node[]>> chunks_;
 };
 
 class Node {

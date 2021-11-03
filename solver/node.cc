@@ -173,7 +173,8 @@ void Pool::Delete(Node* node) { Free(node); }
 
 Node* Pool::Allocate() {
   if (!head_) {
-    auto nodes = new Node[256];
+    chunks_.emplace_back(new Node[256]);
+    auto nodes = chunks_.back().get();
     for (int i = 0; i < 256; ++i) Free(&nodes[i]);
   }
   auto old_head = head_;
