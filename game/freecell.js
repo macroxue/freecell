@@ -2,7 +2,7 @@ var reserves = [], unpacked_reserves = [], foundations = [], tableaus = [];
 var reserve_signs = 'abcd', tableau_signs = '12345678';
 var current_move = -1, move_codes = [], snapshots = [];
 var card_destinations = [];
-var selected_auto_play = 'max';
+var selected_auto_play = 'max', auto_play_modes = ['none', 'safe', 'max'];
 var replay = false;
 var elapse = 0, show_elapse = false;
 var solutions = {}, solved = false, wins = 0, solver_attempts = 0;
@@ -20,7 +20,7 @@ function initialize() {
   }
 
   var new_auto_play = get_cookie('auto_play');
-  if (['max', 'safe', 'none'].includes(new_auto_play)) {
+  if (auto_play_modes.includes(new_auto_play)) {
     selected_auto_play = new_auto_play;
   }
   document.getElementById('select_auto_play').value = selected_auto_play;
@@ -198,7 +198,7 @@ function get_solution() {
     return;
   }
   if (deal_num > 1000000) {
-    var auto = selected_auto_play == 'max' ? 2 : selected_auto_play == 'safe' ? 1 : 0;
+    var auto = auto_play_modes.indexOf(selected_auto_play);
     var solution = Module.ccall('solve', // name of C function
                                 'string', // return type
                                 ['number', 'number', 'number'], // argument types
