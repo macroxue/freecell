@@ -6,12 +6,6 @@ for games 1 to 1 million. The solutions are near-optimal, averaging 25.5 moves p
 
 [![Screenshot](https://github.com/macroxue/freecell/blob/master/game/screenshot.png)](https://macroxue.github.io/freecell/game/freecell.html)
 
-The game controls are explained below. The player simply taps on a card or a column and
-the game will figure out a reasonable move. The player can also drag and drop a card to
-specify the exact move.
-
-![Menu-Bar](https://github.com/macroxue/freecell/blob/master/game/menu-bar.png)
-
 Follow the link [94717719](https://macroxue.github.io/freecell/game/freecell.html?deal=94717719:6r565r52135157785r65b64r7r727874b71267626r64a6761rc71r141312c1723231273r343232b35r856r86b88356858r8184c835651528241r216r263r2341464342a4454r27812r2r2825)
 and use the move controls to see how the difficult game is solved in 76 moves.
 

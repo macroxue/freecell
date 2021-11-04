@@ -186,32 +186,28 @@ div#alert {
   font-size: 60px;
   text-shadow: 2px 2px 1px grey;
 }
-div.help {
-  font-family: DejaVu;
-  font-size: 20px;
-  margin-left: 20px;
-  right: 20px;
-  bottom: 20px;
-  opacity: 1.0;
-  position: absolute;
-  z-index: 1001;
-}
-div#help_sign {
-  background: darkgreen;
-  color: aqua;
-  display: inline;
-  text-shadow: 3px 3px 2px black;
-}
-div#help_message {
-  background: white;
+div.tip {
+  background: lightyellow;
+  border-radius: 6px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
   color: black;
   display: none;
+  font-family: DejaVu;
+  font-size: 14px;
+  opacity: 0.95;
+  padding: 4px;
+  position: absolute;
   text-shadow: 1px 2px 5px grey;
+  z-index: 1001;
 }
-div#help_message ul {
-  margin-right: 30px;
+div#instructions {
+  font-size: 18px;
 }
-li.info {
-  color: darkorange;
+div.line {
+  background: orange;
+  display: none;
+  padding: 1px;
+  position: absolute;
+  transform: rotate(90deg);
+  z-index: 1000;
 }

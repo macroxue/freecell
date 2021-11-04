@@ -6,6 +6,7 @@ var selected_auto_play = 'max', auto_play_modes = ['none', 'safe', 'max'];
 var replay = false;
 var elapse = 0, show_elapse = false;
 var solutions = {}, solved = false, wins = 0, solver_attempts = 0;
+var options_on = true, help_on = false;
 
 function initialize() {
   Array.prototype.last = function() { return this[this.length - 1]; }
@@ -13,6 +14,7 @@ function initialize() {
   create_clean_deck();
   create_picture_decks();
   show_element('options');
+  hide_element('instructions');
 
   card_destinations = new Array(52);
   for (var i = 0; i < card_destinations.length; ++i) {
@@ -116,6 +118,12 @@ function deal_hand(deal_num, cards = '') {
 
 function redraw() {
   restore(snapshots[current_move]);
+  if (help_on) {
+    toggle_help();
+    if (options_on) {
+      toggle_help();
+    }
+  }
 }
 
 function restore(snapshot) {
@@ -796,13 +804,9 @@ function hide_element(id) {
   document.getElementById(id).style.display = 'none';
 }
 
-function toggle_element(id) {
-  var element = document.getElementById(id);
-  if (element.style.display == 'none') {
-    element.style.display = 'block';
-  } else {
-    element.style.display = 'none';
-  }
+function toggle_options() {
+  options_on = !options_on;
+  document.getElementById('options').style.display = options_on ? 'block' : 'none';
   redraw();
 }
 
@@ -822,6 +826,45 @@ function toggle_elapse() {
     set_element('elapse', make_readable(elapse));
   } else {
     set_element('elapse', 'Time');
+  }
+}
+
+var controls = ['solve', 'deal_num', 'prev_deal', 'next_deal',
+  'select_deck', 'select_auto_play', 'undo_all', 'redo_all', 'moves',
+  'undo', 'redo', 'elapse', 'help_sign'];
+
+function toggle_help() {
+  help_on = !help_on;
+  if (help_on) {
+    var lines = [2, 1, 2, 1, 2, 1, 2, 1, 3, 2, 1, 2, 1];
+    var line_gap = 36;
+    for (var i = 0; i < controls.length; ++i) {
+      var rect = get_element_position(controls[i]);
+      var control_bottom = rect.top + rect.height;
+      var help = document.getElementById('help_' + controls[i]);
+      var help_left = rect.left + rect.width / (rect.width > 80 ? 4 : 2);
+      var help_top = control_bottom + line_gap * lines[i] - line_gap / 2;
+      help.style.left = help_left;
+      help.style.top = help_top;
+      help.style.display = 'block';
+
+      var line_length = help_top - control_bottom + 10;
+      var line = document.getElementById('line_' + controls[i]);
+      line.style.left = help_left - line_length / 2;
+      line.style.top = control_bottom + line_length / 2 - 5;
+      line.style.width = line_length;
+      line.style.display = 'block';
+    }
+    var rect = get_element_position('t1');
+    instructions.style.left = rect.left;
+    instructions.style.top = rect.top;
+    instructions.style.display = 'block';
+  } else {
+    hide_element('instructions');
+    for (var i = 0; i < controls.length; ++i) {
+      hide_element('help_' + controls[i]);
+      hide_element('line_' + controls[i]);
+    }
   }
 }
 
@@ -846,14 +889,4 @@ function get_cookie(key) {
     }
   }
   return '';
-}
-
-function show_help() {
-  hide_element('help_sign');
-  show_element('help_message');
-}
-
-function hide_help() {
-  hide_element('help_message');
-  show_element('help_sign');
 }
