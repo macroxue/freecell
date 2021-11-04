@@ -15,6 +15,7 @@ function initialize() {
   create_picture_decks();
   show_element('options');
   hide_element('instructions');
+  add_special_solutions();
 
   card_destinations = new Array(52);
   for (var i = 0; i < card_destinations.length; ++i) {
@@ -194,6 +195,10 @@ function check_replay() {
     redo();
   }
   setTimeout(() => check_replay(), 1000);
+}
+
+function add_special_solutions() {
+  solutions[94717719] = '6r565r52135157785r65b64r7r727874b71267626r64a6761rc71r141312c1723231273r343232b35r856r86b88356858r8184c835651528241r216r263r2341464342a4454r27812r2r2825';
 }
 
 function get_solution() {
