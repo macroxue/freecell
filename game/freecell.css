@@ -50,7 +50,7 @@ table.blackcard:hover, table.redcard:hover {
   background: lightgrey;
 }
 table.blackcard, table.redcard, td.nocard {
-  background-color: white;
+  background-color: floralwhite;
   border: 1px solid lightgrey;
   border-radius: 6px;
   border-spacing: 0px;
