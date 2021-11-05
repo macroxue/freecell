@@ -5,7 +5,7 @@ var card_destinations = [];
 var selected_auto_play = 'max', auto_play_modes = ['none', 'safe', 'max'];
 var replay = false;
 var elapse = 0, show_elapse = false;
-var solutions = {}, solved = false, wins = 0, solver_attempts = 0;
+var solutions = {}, solved = false, wins = 0, solver_attempts = 0, alert_timeout;
 var options_on = true, help_on = false;
 
 function initialize() {
@@ -202,6 +202,10 @@ function add_special_solutions() {
 }
 
 function get_solution() {
+  if (alert_timeout) {
+    hide_element('alert');
+    clearTimeout(alert_timeout);
+  }
   var deal_num = document.getElementById('deal_num').value;
   if (deal_num <= 0 || deal_num > 1000000000) {
     return;
@@ -223,7 +227,7 @@ function get_solution() {
       ++solver_attempts;
       set_element('alert', 'No solution with attempt ' + solver_attempts.toString());
       show_element('alert');
-      setTimeout(() => hide_element('alert'), 3000);
+      alert_timeout = setTimeout(() => hide_element('alert'), 3000);
     }
     return;
   }
