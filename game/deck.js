@@ -132,16 +132,20 @@ function select_deck() {
 }
 
 var standard_spade_ace = `
-    <td class='left'><div class='rank'>A</div><div class='suit'>{suit_sign}</div></td>
+    <td class='left'><div class='rank'>A</div><div class='suit'>{suit_sign}</div>
+      <div class='suit2'>{suit_sign}</div></td>
     <td class='center_large'><div class='up'>{suit_sign}</div></td>
-    <td class='right'><div class='rank'>A</div><div class='suit'>{suit_sign}</div></td>
+    <td class='right'><div class='rank'>A</div><div class='suit'>{suit_sign}</div>
+      <div class='suit2'>{suit_sign}</div></td>
   `;
 
 var standard_deck = [
   `
-    <td class='left'><div class='rank'>A</div><div class='suit'>{suit_sign}</div></td>
+    <td class='left'><div class='rank'>A</div><div class='suit'>{suit_sign}</div>
+      <div class='suit2'>{suit_sign}</div></td>
     <td class='center'><div class='up'>&nbsp;{suit_sign}&nbsp;</div></td>
-    <td class='right'><div class='rank'>A</div><div class='suit'>{suit_sign}</div></td>
+    <td class='right'><div class='rank'>A</div><div class='suit'>{suit_sign}</div>
+      <div class='suit2'>{suit_sign}</div></td>
   `,
   `
     <td class='left'><div class='rank'>2</div><div class='suit'>{suit_sign}</div></td>

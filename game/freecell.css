@@ -117,6 +117,12 @@ div.rank2 {
 div.suit {
   transform: scale(0.8, 0.8);
 }
+div.suit2 {
+  left: 9px;
+  bottom: 3px;
+  position: absolute;
+  transform: scale(0.8, 0.8) rotate(180deg);
+}
 
 /* Styles for the options dialog */
 div.options {
