@@ -141,7 +141,6 @@ label {
   color: skyblue;
 }
 label.control {
-  font-family: "Noto Color Emoji";
   font-size: 130%;
 }
 label#moves {
