@@ -290,10 +290,10 @@ function play_coded_move(move_code) {
   }
 }
 
-function set_card(card, left, top, z_index = 0) {
-  card_destinations[card].push({left:left, top:top, z_index:z_index});
+function set_card(card, left, top, z_index = 0, delay = 0) {
+  card_destinations[card].push({left:left, top:top, z_index:z_index, delay:delay});
   if (card_destinations[card].length == 1) {
-    start_animation(get_card_id(card), left, top, z_index);
+    setTimeout(() => start_animation(get_card_id(card), left, top, z_index), delay);
   }
 }
 
@@ -332,7 +332,7 @@ function animate_move(card_element, left, top, num_steps, step_left, step_top) {
     card_destinations[card].shift();
     if (card_destinations[card].length >= 1) {
       var d = card_destinations[card][0];
-      start_animation(get_card_id(card), d.left, d.top, d.z_index);
+      setTimeout(() => start_animation(card_element.id, d.left, d.top, d.z_index), d.delay);
     }
   }
 }
@@ -658,11 +658,7 @@ function push_to_foundation(card, is_auto_play = false) {
   var id = 'f' + (suit(card)).toString();
   var rect = get_element_position(id);
   var z_index = suit(card) * 13 + rank(card);
-  if (is_auto_play) {
-    setTimeout(() => set_card(card, rect.left, rect.top, z_index), 300);
-  } else {
-    set_card(card, rect.left, rect.top, z_index);
-  }
+  set_card(card, rect.left, rect.top, z_index, is_auto_play ? 300 : 0);
 }
 
 function can_push_to_reserve() {
