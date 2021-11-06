@@ -1,24 +1,44 @@
 var suits = ['&spades;', '&hearts;', '&diams;', '&clubs;'];
 var ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
-var selected_deck = 0;
+var selected_deck = 14;
 var black = 0, red = 1;
 var spades = 0, hearts = 1, diams = 2, clubs = 3;
 var ace = 0, deuce = 1, king = 12;
 var deck_pictures = [
   // clean
   ['', '', ''],
+  // bear
+  ['&#x1F428;', '&#x1F43C;', '&#x1F43B;'],
+  // bird
+  ['&#x1F427;', '&#x1F54A;', '&#x1F985;'],
+  // bug
+  ['&#x1F41D;', '&#x1F41E;', '&#x1F98B;'],
   // elf
   ['&#x1F9DD;', '&#x1F9DD;&#x200D;&#x2640;&#xFE0F;', '&#x1F9DD;&#x200D;&#x2642;&#xFE0F;'],
   // fairy
   ['&#x1F9DA;', '&#x1F9DA;&#x200D;&#x2640;&#xFE0F;', '&#x1F9DA;&#x200D;&#x2642;&#xFE0F;'],
+  // feline
+  ['&#x1F431;', '&#x1F42F;', '&#x1F981;'],
+  // fish
+  ['&#x1F41F;', '&#x1F420;', '&#x1F421;'],
+  // flower
+  ['&#x1F337;', '&#x1F339;', '&#x1F490;'],
+  // fruit
+  ['&#x1F34B;', '&#x1F34E;', '&#x1F34A;'],
   // genie
   ['&#x1F9DE;', '&#x1F9DE;&#x200D;&#x2640;&#xFE0F;', '&#x1F9DE;&#x200D;&#x2642;&#xFE0F;'],
   // hero
   ['&#x1F9B8;', '&#x1F9B8;&#x200D;&#x2640;&#xFE0F;', '&#x1F9B8;&#x200D;&#x2642;&#xFE0F;'],
+  // leaf
+  ['&#x1F340;', '&#x1F33E;', '&#x1F341;'],
   // mage
   ['&#x1F9D9;', '&#x1F9D9;&#x200D;&#x2640;&#xFE0F;', '&#x1F9D9;&#x200D;&#x2642;&#xFE0F;'],
+  // sweet
+  ['&#x1F369;', '&#x1F368;', '&#x1F382;'],
   // vampire
   ['&#x1F9DB;', '&#x1F9DB;&#x200D;&#x2640;&#xFE0F;', '&#x1F9DB;&#x200D;&#x2642;&#xFE0F;'],
+  // veggi
+  ['&#x1F33D;', '&#x1F344;', '&#x1F966;'],
   // villain
   ['&#x1F9B9;', '&#x1F9B9;&#x200D;&#x2640;&#xFE0F;', '&#x1F9B9;&#x200D;&#x2642;&#xFE0F;'],
   // zombie
@@ -79,6 +99,7 @@ function create_clean_deck() {
       <table class='${card_color}'>
         <tr>
           <td class='left'><div class='rank'>${card_sign}</div></td>
+          <td>&nbsp;</td>
           <td class='right'><div class='rank'>${card_sign}</div></td>
         </tr>
       </table>`;
