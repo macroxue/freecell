@@ -851,7 +851,7 @@ function toggle_help() {
       var rect = get_element_position(controls[i]);
       var control_bottom = rect.top + rect.height;
       var help = document.getElementById('help_' + controls[i]);
-      var help_left = rect.left + rect.width / (rect.width > 80 ? 4 : 2);
+      var help_left = rect.left + Math.min(rect.width / 2, 25);
       var help_top = control_bottom + line_gap * lines[i] - line_gap / 2;
       help.style.left = help_left;
       help.style.top = help_top;
