@@ -293,12 +293,12 @@ function play_coded_move(move_code) {
 function set_card(card, left, top, z_index = 0, delay = 0) {
   card_destinations[card].push({left:left, top:top, z_index:z_index, delay:delay});
   if (card_destinations[card].length == 1) {
-    setTimeout(() => start_animation(get_card_id(card), left, top, z_index), delay);
+    setTimeout(() => start_animation(card, left, top, z_index), delay);
   }
 }
 
-function start_animation(card_id, left, top, z_index) {
-  var card_element = document.getElementById(card_id);
+function start_animation(card, left, top, z_index) {
+  var card_element = document.getElementById(get_card_id(card));
   var old_left = parseInt(card_element.style.left);
   var old_top = parseInt(card_element.style.top);
   var num_steps = 15, step_left = 0, step_top = 0;
@@ -312,19 +312,18 @@ function start_animation(card_id, left, top, z_index) {
   card_element.onclick = () => {};
   card_element.ondragover = () => {};
   card_element.setAttribute('draggable', false);
-  animate_move(card_element, old_left, old_top, num_steps, step_left, step_top);
+  animate_move(card, old_left, old_top, num_steps, step_left, step_top);
 }
 
-function animate_move(card_element, left, top, num_steps, step_left, step_top) {
+function animate_move(card, left, top, num_steps, step_left, step_top) {
+  var card_element = document.getElementById(get_card_id(card));
   left += step_left;
   top += step_top;
   card_element.style.left = left;
   card_element.style.top = top;
   if (--num_steps > 0) {
-    setTimeout(() => animate_move(card_element, left, top,
-                                  num_steps, step_left, step_top), 10);
+    setTimeout(() => animate_move(card, left, top, num_steps, step_left, step_top), 10);
   } else {
-    var card = get_card(card_element.id);
     card_element.style.zIndex &= 0xFF;
     card_element.onclick = () => move_card(card);
     card_element.ondragover = (event) => accept_drop(event);
@@ -332,7 +331,7 @@ function animate_move(card_element, left, top, num_steps, step_left, step_top) {
     card_destinations[card].shift();
     if (card_destinations[card].length >= 1) {
       var d = card_destinations[card][0];
-      setTimeout(() => start_animation(card_element.id, d.left, d.top, d.z_index), d.delay);
+      setTimeout(() => start_animation(card, d.left, d.top, d.z_index), d.delay);
     }
   }
 }
