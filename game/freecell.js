@@ -214,12 +214,9 @@ function prompt_difficulty() {
                               'string', // return type
                               ['number', 'number', 'number'], // argument types
                               [deal_num, 1024 << solver_attempts, auto]); // arguments
-  if (solution.length == 0) {
-    set_element('difficulty', '(?)');
-  } else {
-    var difficulty = Math.min(Math.max(Math.round(solution.length / 6 - 4), 1), 9);
-    set_element('difficulty', '(' + difficulty.toString() + ')');
-  }
+  var difficulty = solution.length == 0 ? 10 :
+    Math.min(Math.max(Math.round(solution.length / 6 - 4), 1), 9);
+  set_element('difficulty', difficulty.toString());
 }
 
 function add_special_solutions() {
@@ -854,24 +851,24 @@ function toggle_elapse() {
   if (show_elapse) {
     set_element('elapse', make_readable(elapse));
   } else {
-    set_element('elapse', 'Time');
+    set_element('elapse', '⏱');
   }
 }
 
-var controls = ['solve', 'deal_num', 'difficulty', 'prev_deal', 'next_deal',
+var controls = ['solve', 'difficulty', 'prev_deal', 'next_deal', 'deal_num',
   'select_deck', 'select_auto_play', 'undo_all', 'redo_all', 'moves',
   'undo', 'redo', 'elapse', 'help_sign'];
 
 function toggle_help() {
   help_on = !help_on;
   if (help_on) {
-    var lines = [2, 1, 3, 2, 1, 2, 1, 2, 1, 3, 2, 1, 2, 1];
-    var line_gap = 36;
+    var lines = [4, 3, 2, 1, 2, 1, 3, 2, 1, 3, 2, 1, 2, 1];
+    var line_gap = 33;
     for (var i = 0; i < controls.length; ++i) {
       var rect = get_element_position(controls[i]);
       var control_bottom = rect.top + rect.height;
       var help = document.getElementById('help_' + controls[i]);
-      var help_left = rect.left + Math.min(rect.width / 2, 25);
+      var help_left = rect.left + rect.width / 2 + (controls[i] == 'deal_num' ? 10 : 0);
       var help_top = control_bottom + line_gap * lines[i] - line_gap / 2;
       help.style.left = help_left;
       help.style.top = help_top;

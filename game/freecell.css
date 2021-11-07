@@ -138,22 +138,27 @@ div.options {
   z-index: 101;
 }
 label {
-  color: skyblue;
+  color: lightblue;
 }
 label.control {
   font-size: 130%;
 }
-label#difficulty, label#moves {
-  color: yellow;
+label.separator {
+  color: grey;
+  font-size: 130%;
+  text-shadow: 1px 1px 1px black;
+}
+label#difficulty, label#moves, label#elapse {
   display: inline-block;
-  width: 36px;
+  font-size: 22px;
+  width: 40px;
 }
 label#replay {
   display: none;
 }
 label#elapse {
   display: inline-block;
-  width: 72px;
+  width: 60px;
 }
 input, select {
   appearance: none;
@@ -162,9 +167,6 @@ input, select {
   color: yellow;
   font-family: DejaVu;
   font-size: 22px;
-}
-input {
-  font-size: 20px;
 }
 input:hover, select:hover {
   background: green;

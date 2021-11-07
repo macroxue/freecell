@@ -10,26 +10,27 @@
   </head>
   <body onload='initialize()' onresize='redraw()'>
     <div class='options' id='options'>
-      <label id='solve' onclick='get_solution()'>#</label>
-      <input type='number' min=1 max=1000000000 size=9 id='deal_num' onchange='set_deal()'></input>
-
-      <label id='difficulty'>(&nbsp;)</label>
+      <label id='solve' onclick='get_solution()'>❕</label>
+      <label class='separator'>|</label>
+      <label id='difficulty'>&nbsp;</label>
+      <label class='separator'>|</label>
       <label class='control' id='prev_deal' onclick='previous_deal()'>◀️</label>
       <label class='control' id='next_deal' onclick='next_deal()'>▶️</label>
+      <input type='number' min=1 max=1000000000 size=9 id='deal_num' onchange='set_deal()'></input>
 
-      <label>Deck</label>
+      <label class='separator'>|</label>
       <select id='select_deck' onchange='select_deck()'>
         <option value=0>clean</option>
       </select>
 
-      <label>Auto</label>
+      <label class='separator'>|</label>
       <select id='select_auto_play' onchange='select_auto_play()'>
         <option value='max' selected>max</option>
         <option value='safe'>safe</option>
         <option value='none'>none</option>
       </select>
 
-      <label>Moves</label>
+      <label class='separator'>|</label>
       <label class='control' id='undo_all' onclick='undo_all()'>⏮️</label>
       <label class='control' id='redo_all' onclick='redo_all()'>⏭️</label>
       <label id='moves'></label>
@@ -37,8 +38,10 @@
       <label class='control' id='redo' onclick='redo()'>▶️</label>
       <label class='control' id='replay' onclick='toggle_replay()'>⏯️</label>
 
-      <label id='elapse' onclick='toggle_elapse()'>Time</label>
-      <label id='help_sign' onclick='toggle_help()'>?</div>
+      <label class='separator'>|</label>
+      <label class='control' id='elapse' onclick='toggle_elapse()'>⏱</label>
+      <label class='separator'>|</label>
+      <label id='help_sign' onclick='toggle_help()'>❔</div>
     </div>
 
     <table class='reserve'>
@@ -75,13 +78,13 @@
     <div class='message' id='alert' onclick='hide_element("alert")'></div>
 
     <div class='tip' id='help_solve'>
-      Download solution<br>for #1~1000000<br>or solve in browser<br>for #>1000000
+      Download solution for game #1~1000000 or solve in browser for game #>1000000
     </div>
     <div class='tip' id='help_deal_num'>Game number</div>
-    <div class='tip' id='help_difficulty'>Difficulty level 1~9<br>or ? if unknown</div>
+    <div class='tip' id='help_difficulty'>Difficulty level</div>
     <div class='tip' id='help_prev_deal'>Previous game</div>
     <div class='tip' id='help_next_deal'>Next game</div>
-    <div class='tip' id='help_select_deck'>Card deck style</div>
+    <div class='tip' id='help_select_deck'>Card style</div>
     <div class='tip' id='help_select_auto_play'>Auto play mode</div>
     <div class='tip' id='help_undo_all'>Undo all</div>
     <div class='tip' id='help_redo_all'>Redo all</div>
