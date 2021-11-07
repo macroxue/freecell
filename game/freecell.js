@@ -5,7 +5,8 @@ var card_destinations = [];
 var selected_auto_play = 'max', auto_play_modes = ['none', 'safe', 'max'];
 var replay = false;
 var elapse = 0, show_elapse = false;
-var solutions = {}, solved = false, wins = 0, solver_attempts = 0, alert_timeout;
+var solutions = {}, solved = false, wins = 0, solver_attempts = 0;
+var alert_timeout, difficulty_timeout;
 var options_on = true, help_on = false;
 
 function initialize() {
@@ -109,6 +110,12 @@ function deal_hand(deal_num, cards = '') {
     push_to_tableau(deck[i], i % 8);
   }
 
+  // Show difficulty level with a delay to let the solver environment initialize.
+  if (difficulty_timeout) {
+    clearTimeout(difficulty_timeout);
+  }
+  difficulty_timeout = setTimeout(() => prompt_difficulty(), 1000);
+
   current_move = -1;
   move_codes = [];
   snapshots = [];
@@ -195,6 +202,24 @@ function check_replay() {
     redo();
   }
   setTimeout(() => check_replay(), 1000);
+}
+
+function prompt_difficulty() {
+  var deal_num = document.getElementById('deal_num').value;
+  if (deal_num <= 0 || deal_num > 1000000000) {
+    return;
+  }
+  var auto = auto_play_modes.indexOf('max');
+  var solution = Module.ccall('solve', // name of C function
+                              'string', // return type
+                              ['number', 'number', 'number'], // argument types
+                              [deal_num, 1024 << solver_attempts, auto]); // arguments
+  if (solution.length == 0) {
+    set_element('difficulty', '(?)');
+  } else {
+    var difficulty = Math.min(Math.max(Math.round(solution.length / 6 - 4), 1), 9);
+    set_element('difficulty', '(' + difficulty.toString() + ')');
+  }
 }
 
 function add_special_solutions() {
@@ -833,14 +858,14 @@ function toggle_elapse() {
   }
 }
 
-var controls = ['solve', 'deal_num', 'prev_deal', 'next_deal',
+var controls = ['solve', 'deal_num', 'difficulty', 'prev_deal', 'next_deal',
   'select_deck', 'select_auto_play', 'undo_all', 'redo_all', 'moves',
   'undo', 'redo', 'elapse', 'help_sign'];
 
 function toggle_help() {
   help_on = !help_on;
   if (help_on) {
-    var lines = [2, 1, 2, 1, 2, 1, 2, 1, 3, 2, 1, 2, 1];
+    var lines = [2, 1, 3, 2, 1, 2, 1, 2, 1, 3, 2, 1, 2, 1];
     var line_gap = 36;
     for (var i = 0; i < controls.length; ++i) {
       var rect = get_element_position(controls[i]);

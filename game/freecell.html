@@ -12,6 +12,8 @@
     <div class='options' id='options'>
       <label id='solve' onclick='get_solution()'>#</label>
       <input type='number' min=1 max=1000000000 size=9 id='deal_num' onchange='set_deal()'></input>
+
+      <label id='difficulty'>(&nbsp;)</label>
       <label class='control' id='prev_deal' onclick='previous_deal()'>◀️</label>
       <label class='control' id='next_deal' onclick='next_deal()'>▶️</label>
 
@@ -76,6 +78,7 @@
       Download solution<br>for #1~1000000<br>or solve in browser<br>for #>1000000
     </div>
     <div class='tip' id='help_deal_num'>Game number</div>
+    <div class='tip' id='help_difficulty'>Difficulty level 1~9<br>or ? if unknown</div>
     <div class='tip' id='help_prev_deal'>Previous game</div>
     <div class='tip' id='help_next_deal'>Next game</div>
     <div class='tip' id='help_select_deck'>Card deck style</div>
@@ -89,6 +92,7 @@
     <div class='tip' id='help_help_sign'>Help</div>
     <div class='line' id='line_solve'></div>
     <div class='line' id='line_deal_num'></div>
+    <div class='line' id='line_difficulty'></div>
     <div class='line' id='line_prev_deal'></div>
     <div class='line' id='line_next_deal'></div>
     <div class='line' id='line_select_deck'></div>
