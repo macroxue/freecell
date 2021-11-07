@@ -1,6 +1,6 @@
 var suits = ['&spades;', '&hearts;', '&diams;', '&clubs;'];
 var ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
-var selected_deck = 14;
+var selected_deck = 10;
 var black = 0, red = 1;
 var spades = 0, hearts = 1, diams = 2, clubs = 3;
 var ace = 0, deuce = 1, king = 12;
@@ -8,41 +8,41 @@ var deck_pictures = [
   // clean
   ['', '', ''],
   // bear
-  ['&#x1F428;', '&#x1F43C;', '&#x1F43B;'],
+  ['\u{1F428}', '\u{1F43C}', '\u{1F43B}'],
+  // cat
+  ['\u{1F431}', '\u{1F42F}', '\u{1F981}'],
   // bird
-  ['&#x1F427;', '&#x1F54A;', '&#x1F985;'],
-  // bug
-  ['&#x1F41D;', '&#x1F41E;', '&#x1F98B;'],
-  // elf
-  ['&#x1F9DD;', '&#x1F9DD;&#x200D;&#x2640;&#xFE0F;', '&#x1F9DD;&#x200D;&#x2642;&#xFE0F;'],
-  // fairy
-  ['&#x1F9DA;', '&#x1F9DA;&#x200D;&#x2640;&#xFE0F;', '&#x1F9DA;&#x200D;&#x2642;&#xFE0F;'],
-  // feline
-  ['&#x1F431;', '&#x1F42F;', '&#x1F981;'],
+  ['\u{1F427}', '\u{1F54A}', '\u{1F985}'],
   // fish
-  ['&#x1F41F;', '&#x1F420;', '&#x1F421;'],
+  ['\u{1F41F}', '\u{1F420}', '\u{1F421}'],
+  // bug
+  ['\u{1F41D}', '\u{1F41E}', '\u{1F98B}'],
   // flower
-  ['&#x1F337;', '&#x1F339;', '&#x1F490;'],
+  ['\u{1F337}', '\u{1F339}', '\u{1F490}'],
   // fruit
-  ['&#x1F34B;', '&#x1F34E;', '&#x1F34A;'],
-  // genie
-  ['&#x1F9DE;', '&#x1F9DE;&#x200D;&#x2640;&#xFE0F;', '&#x1F9DE;&#x200D;&#x2642;&#xFE0F;'],
-  // hero
-  ['&#x1F9B8;', '&#x1F9B8;&#x200D;&#x2640;&#xFE0F;', '&#x1F9B8;&#x200D;&#x2642;&#xFE0F;'],
-  // leaf
-  ['&#x1F340;', '&#x1F33E;', '&#x1F341;'],
-  // mage
-  ['&#x1F9D9;', '&#x1F9D9;&#x200D;&#x2640;&#xFE0F;', '&#x1F9D9;&#x200D;&#x2642;&#xFE0F;'],
-  // sweet
-  ['&#x1F369;', '&#x1F368;', '&#x1F382;'],
-  // vampire
-  ['&#x1F9DB;', '&#x1F9DB;&#x200D;&#x2640;&#xFE0F;', '&#x1F9DB;&#x200D;&#x2642;&#xFE0F;'],
+  ['\u{1F34B}', '\u{1F34E}', '\u{1F34A}'],
   // veggi
-  ['&#x1F33D;', '&#x1F344;', '&#x1F966;'],
+  ['\u{1F33D}', '\u{1F344}', '\u{1F966}'],
+  // leaf
+  ['\u{1F340}', '\u{1F33E}', '\u{1F341}'],
+  // sweet
+  ['\u{1F369}', '\u{1F368}', '\u{1F382}'],
+  // elf
+  ['\u{1F9DD}', '\u{1F9DD}\u{200D}\u{2640}\u{FE0F}', '\u{1F9DD}\u{200D}\u{2642}\u{FE0F}'],
+  // fairy
+  ['\u{1F9DA}', '\u{1F9DA}\u{200D}\u{2640}\u{FE0F}', '\u{1F9DA}\u{200D}\u{2642}\u{FE0F}'],
+  // genie
+  ['\u{1F9DE}', '\u{1F9DE}\u{200D}\u{2640}\u{FE0F}', '\u{1F9DE}\u{200D}\u{2642}\u{FE0F}'],
+  // hero
+  ['\u{1F9B8}', '\u{1F9B8}\u{200D}\u{2640}\u{FE0F}', '\u{1F9B8}\u{200D}\u{2642}\u{FE0F}'],
+  // mage
+  ['\u{1F9D9}', '\u{1F9D9}\u{200D}\u{2640}\u{FE0F}', '\u{1F9D9}\u{200D}\u{2642}\u{FE0F}'],
+  // vampire
+  ['\u{1F9DB}', '\u{1F9DB}\u{200D}\u{2640}\u{FE0F}', '\u{1F9DB}\u{200D}\u{2642}\u{FE0F}'],
   // villain
-  ['&#x1F9B9;', '&#x1F9B9;&#x200D;&#x2640;&#xFE0F;', '&#x1F9B9;&#x200D;&#x2642;&#xFE0F;'],
+  ['\u{1F9B9}', '\u{1F9B9}\u{200D}\u{2640}\u{FE0F}', '\u{1F9B9}\u{200D}\u{2642}\u{FE0F}'],
   // zombie
-  ['&#x1F9DF;', '&#x1F9DF;&#x200D;&#x2640;&#xFE0F;', '&#x1F9DF;&#x200D;&#x2642;&#xFE0F;'],
+  ['\u{1F9DF}', '\u{1F9DF}\u{200D}\u{2640}\u{FE0F}', '\u{1F9DF}\u{200D}\u{2642}\u{FE0F}'],
 ];
 
 // Helpers for card properties.
@@ -109,7 +109,12 @@ function create_clean_deck() {
 
 function create_picture_decks() {
   var rect = get_element_position('logo');
+  var select_deck = document.getElementById('select_deck');
   for (var deck = 1; deck < deck_pictures.length; ++deck) {
+    var option = document.createElement('option');
+    option.text = deck_pictures[deck].join('');
+    option.value = deck;
+    select_deck.add(option);
     for (var card = 0; card < 52; ++card) {
       var div = document.createElement('div');
       div.classList.add('card');
