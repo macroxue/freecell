@@ -128,8 +128,7 @@ div.suit2 {
 div.options {
   background: darkgreen;
   font-size: 22px;
-  left: 0;
-  top: 0;
+  height: 35px;
   margin: auto;
   opacity: 0.8;
   position: relative;
