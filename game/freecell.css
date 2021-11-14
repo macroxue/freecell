@@ -130,9 +130,9 @@ div.suit2 {
 
 /* Styles for the options dialog */
 div.options {
-  background: darkgreen;
+  background: transparent;
   font-size: 22px;
-  height: 35px;
+  height: 37px;
   margin: auto;
   opacity: 0.8;
   position: relative;
@@ -165,7 +165,7 @@ label#elapse {
 }
 input, select {
   appearance: none;
-  background: darkgreen;
+  background: transparent;
   border: 0px;
   color: yellow;
   font-family: DejaVu;
