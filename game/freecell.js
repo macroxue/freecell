@@ -4,6 +4,7 @@ var current_move = -1, move_codes = [], snapshots = [];
 var card_destinations = [];
 var selected_auto_play = 'max', auto_play_modes = ['none', 'safe', 'max'];
 var replay = false;
+var sound_enabled = false, music_enabled = false;
 var elapse = 0, show_elapse = false;
 var solutions = {}, solved = false, wins = 0, solver_attempts = 0;
 var alert_timeout, difficulty_timeout;
@@ -35,6 +36,12 @@ function initialize() {
   }
   document.getElementById('select_deck').value = selected_deck;
 
+  var new_sound_enabled = get_cookie('sound');
+  if (new_sound_enabled == 'true' || new_sound_enabled == 'false') {
+    sound_enabled = new_sound_enabled == 'true';
+  }
+  set_element('sound', sound_enabled ? '🔊' : '🔇');
+
   var new_wins = parseInt(get_cookie('wins'));
   if (0 <= new_wins && new_wins <= 1000 * 1000) {
     wins = new_wins;
@@ -42,6 +49,9 @@ function initialize() {
   set_element('wins', wins.toString() + get_star(wins));
 
   const url_params = new URLSearchParams(window.location.search);
+  if (url_params.get('music') != null) {
+    music_enabled = true;
+  }
   if (url_params.get('replay') != null) {
     show_element('replay', 'inline');
     setTimeout(() => check_replay(), 1000);
@@ -122,6 +132,7 @@ function deal_hand(deal_num, cards = '') {
   elapse = 0;
   solved = false;
   auto_play();
+  play_sound('shuffle');
 }
 
 function redraw() {
@@ -201,7 +212,7 @@ function check_replay() {
   if (replay) {
     redo();
   }
-  setTimeout(() => check_replay(), 1000);
+  setTimeout(() => check_replay(), music_enabled ? (current_move % 4 + 1) * 120 : 800);
 }
 
 function prompt_difficulty() {
@@ -277,9 +288,13 @@ function play_solution(deal_num, solution, cards = '') {
   document.getElementById('select_auto_play').value = selected_auto_play;
   show_element('options');
   deal_hand(deal_num, cards);
+
+  var save_sound_enabled = sound_enabled;
+  sound_enabled = false;
   for (var i = 0; i < solution.length; i += 2) {
     play_coded_move(solution.slice(i, i+2));
   }
+  sound_enabled = save_sound_enabled;
   solved = true;
 }
 
@@ -419,6 +434,7 @@ function check_for_completion() {
     ];
     set_element('done', messages[Math.floor(Math.random() * messages.length)]);
     show_element('done');
+    play_sound('success');
   }
 }
 
@@ -507,6 +523,7 @@ function try_reserve_to_foundation(index, is_auto_play = false) {
     move_codes.push(reserve_signs[index] + 'h');
     if (!is_auto_play) {
       auto_play();
+      play_note([card]);
     }
     return true;
   }
@@ -520,6 +537,7 @@ function try_reserve_to_tableau(index, column) {
     push_to_tableau(card, column);
     move_codes.push(reserve_signs[index] + tableau_signs[column]);
     auto_play();
+    play_note([card]);
     return true;
   }
   return false;
@@ -565,6 +583,7 @@ function try_tableau_to_foundation(column, is_auto_play = false) {
     move_codes.push(tableau_signs[column] + 'h');
     if (!is_auto_play) {
       auto_play();
+      play_note([card]);
     }
     return true;
   }
@@ -578,6 +597,7 @@ function try_tableau_to_reserve(column) {
     push_to_reserve(card);
     move_codes.push(tableau_signs[column] + 'r');
     auto_play();
+    play_note([card]);
     return true;
   }
   return false;
@@ -589,6 +609,8 @@ function try_tableau_to_tableau(origin_column, target_column) {
     move_tableau_to_tableau(origin_column, target_column, num_movables);
     move_codes.push(tableau_signs[origin_column] + tableau_signs[target_column]);
     auto_play();
+    var index = tableaus[target_column].length - num_movables;
+    play_note(tableaus[target_column].slice(index));
     return true;
   }
   return false;
@@ -680,6 +702,9 @@ function push_to_foundation(card, is_auto_play = false) {
   var rect = get_element_position(id);
   var z_index = suit(card) * 13 + rank(card);
   set_card(card, rect.left, rect.top, z_index, is_auto_play ? 300 : 0);
+  if (is_auto_play && !music_enabled) {
+    play_sound('home');
+  }
 }
 
 function can_push_to_reserve() {
@@ -855,14 +880,48 @@ function toggle_elapse() {
   }
 }
 
+var freq = [130.81, 146.83, 164.81, 174.61, 196, 220, 246.94, 261.63, 293.66,
+  329.63, 349.23, 392, 440, 493.88];
+
+function play_note(cards) {
+  if (!sound_enabled || current_move == 0) {
+    return;
+  }
+  if (music_enabled) {
+    for (var i = 0; i < cards.length; i += 2) {
+      var synth = T("OscGen", { wave: "saw", mul: 0.25 }).play();
+      synth.noteOnWithFreq(freq[12 - rank(cards[i])], 50);
+    }
+  } else {
+    play_sound('move');
+  }
+}
+
+function play_sound(id) {
+  if (!sound_enabled) {
+    return;
+  }
+  var sound = document.getElementById(id);
+  sound.currentTime = 0;
+  sound.playbackRate = 0.7;
+  sound.volume = 0.5;
+  sound.play();
+}
+
+function toggle_sound() {
+  sound_enabled = !sound_enabled;
+  set_cookie('sound', sound_enabled ? 'true' : 'false');
+  set_element('sound', sound_enabled ? '🔊' : '🔇');
+}
+
 var controls = ['solve', 'difficulty', 'prev_deal', 'next_deal', 'deal_num',
   'select_deck', 'select_auto_play', 'undo_all', 'redo_all', 'moves',
-  'undo', 'redo', 'elapse', 'help_sign'];
+  'undo', 'redo', 'elapse', 'sound', 'help_sign'];
 
 function toggle_help() {
   help_on = !help_on;
   if (help_on) {
-    var lines = [4, 3, 2, 1, 2, 1, 3, 2, 1, 3, 2, 1, 2, 1];
+    var lines = [4, 3, 2, 1, 2, 1, 3, 2, 1, 3, 2, 1, 3, 2, 1];
     var line_gap = 33;
     for (var i = 0; i < controls.length; ++i) {
       var rect = get_element_position(controls[i]);

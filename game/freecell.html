@@ -7,8 +7,14 @@
     <script src='freecell.js'/></script>
     <script src='deck.js'/></script>
     <script src='solver.js'/></script>
+    <script src="http://mohayonao.github.io/timbre.js/timbre.js"></script>
   </head>
   <body onload='initialize()' onresize='redraw()'>
+    <audio id='shuffle'<source src='shuffle.mp3'/></audio>
+    <audio id='move'<source src='move.mp3'/></audio>
+    <audio id='home'<source src='home.mp3'/></audio>
+    <audio id='success'<source src='success.mp3'/></audio>
+
     <div class='options' id='options'>
       <label id='solve' onclick='get_solution()'>❕</label>
       <label class='separator'>|</label>
@@ -40,6 +46,8 @@
 
       <label class='separator'>|</label>
       <label class='control' id='elapse' onclick='toggle_elapse()'>⏱</label>
+      <label class='separator'>|</label>
+      <label id='sound' onclick='toggle_sound()'>🔊</label>
       <label class='separator'>|</label>
       <label id='help_sign' onclick='toggle_help()'>❔</div>
     </div>
@@ -92,6 +100,7 @@
     <div class='tip' id='help_undo'>Undo</div>
     <div class='tip' id='help_redo'>Redo</div>
     <div class='tip' id='help_elapse'>Time on/off</div>
+    <div class='tip' id='help_sound'>Sound on/off</div>
     <div class='tip' id='help_help_sign'>Help</div>
     <div class='line' id='line_solve'></div>
     <div class='line' id='line_deal_num'></div>
@@ -106,6 +115,7 @@
     <div class='line' id='line_undo'></div>
     <div class='line' id='line_redo'></div>
     <div class='line' id='line_elapse'></div>
+    <div class='line' id='line_sound'></div>
     <div class='line' id='line_help_sign'></div>
     <div class='tip' id='instructions'>
       <ul>

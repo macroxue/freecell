@@ -154,14 +154,16 @@ label.separator {
 label#difficulty, label#moves, label#elapse {
   display: inline-block;
   font-size: 22px;
+  width: 20px;
+}
+label#moves {
   width: 40px;
+}
+label#elapse {
+  width: 60px;
 }
 label#replay {
   display: none;
-}
-label#elapse {
-  display: inline-block;
-  width: 60px;
 }
 input, select {
   appearance: none;
