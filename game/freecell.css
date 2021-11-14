@@ -25,8 +25,12 @@ body::-webkit-scrollbar {
 }
 
 /* Styles for the game table */
-table.table, table.reserve, table.tableau {
+table.reserve {
   border-spacing: 5px;
+  margin: auto;
+}
+table.tableau {
+  border-spacing: 10px;
   margin: auto;
 }
 div.logo {
