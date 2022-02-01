@@ -409,7 +409,7 @@ function get_field_type(id) {
 
 function get_star(wins) {
   var stars = ['☆', '⭐', '🌟', '💛', '💖', '💘'];
-  var laddar = [10, 30, 100, 300, 1000, 3000];
+  var laddar = [10, 30, 100, 300, 500, 1000];
   for (var i in laddar) {
     if (wins < laddar[i]) {
       return stars[i]
