@@ -138,6 +138,7 @@ div.options {
   position: relative;
   text-align: center;
   vertical-align: center;
+  white-space: nowrap;
   z-index: 101;
 }
 label {
