@@ -304,6 +304,7 @@ string Beam::PrefixSearch(const Node& layout, vector<Move> moves) {
       }
 
       solution->CompleteSolution();
+      if (beam_id_ == 0 && !options.quiet) solution->ShowSummary();
       code += EncodeSolution(*prefix, *solution);
       moves = DecodeSolution(code);
       coded_solution = code;
